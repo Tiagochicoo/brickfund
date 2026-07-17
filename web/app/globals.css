@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  /* Brand — deep evergreen */
+  --color-brand-50: #f0f7f4;
+  --color-brand-100: #dbede3;
+  --color-brand-200: #b8dcca;
+  --color-brand-300: #8ac3a8;
+  --color-brand-400: #57a182;
+  --color-brand-500: #358366;
+  --color-brand-600: #246a51;
+  --color-brand-700: #1c5442;
+  --color-brand-800: #184436;
+  --color-brand-900: #14382e;
+  --color-brand-950: #0a201a;
+
+  /* Brass / gold accent */
+  --color-gold-50: #fbf7ec;
+  --color-gold-100: #f5ecd0;
+  --color-gold-200: #ebd79e;
+  --color-gold-300: #dfbd68;
+  --color-gold-400: #d4a73f;
+  --color-gold-500: #c08f2a;
+  --color-gold-600: #a36f21;
+  --color-gold-700: #82531f;
+  --color-gold-800: #6c431f;
+  --color-gold-900: #5c391e;
+
+  /* Warm neutral cream */
+  --color-cream-50: #fdfbf7;
+  --color-cream-100: #faf6ee;
+  --color-cream-200: #f3ecdf;
+
+  --color-ink: #0c1512;
+}
+
+:root {
+  --background: #fdfbf7;
+  --foreground: #0c1512;
+}
+
+* {
+  border-color: var(--color-cream-200);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+}
+
+/* Subtle grid / radial texture used on hero */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(20, 56, 46, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20, 56, 46, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.shadow-soft {
+  box-shadow:
+    0 1px 2px rgba(12, 21, 18, 0.04),
+    0 8px 24px -12px rgba(12, 21, 18, 0.12);
+}
+
+.shadow-card {
+  box-shadow:
+    0 1px 3px rgba(12, 21, 18, 0.05),
+    0 20px 40px -24px rgba(12, 21, 18, 0.18);
+}
+
+@keyframes float-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float-up {
+  animation: float-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
