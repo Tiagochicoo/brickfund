@@ -235,4 +235,15 @@ export const hi: TranslationDict = {
     raised: "जुटाया",
     all: "सभी",
   },
+  deals: {
+    startInvestmentDeal: "निवेश सौदा शुरू करें",
+    startDeal: "सौदा शुरू करें",
+    processDescription: "आप LOI → APA → एस्क्रो → हैंडओवर से गुज़रेंगे। हम {amount} का सुझाव देंगे।",
+    investmentAmountLabel: "निवेश राशि (USD)",
+    noteToBusinessLabel: "व्यवसाय के लिए नोट (वैकल्पिक)",
+    noteToBusinessPlaceholder: "एक संक्षिप्त परिचय, आपका निवेश विचार, शर्तें…",
+    cancel: "रद्द करें",
+    creating: "बन रहा है…",
+    createDeal: "सौदा बनाएं",
+  },
 };

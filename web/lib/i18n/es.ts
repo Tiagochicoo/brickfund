@@ -246,4 +246,15 @@ export const es: TranslationDict = {
     raised: "recaudado",
     all: "Todos",
   },
+  deals: {
+    startInvestmentDeal: "Iniciar una operación de inversión",
+    startDeal: "Iniciar una operación",
+    processDescription: "Pasará por LOI → APA → cuenta de custodia → entrega. Sugeriremos {amount}.",
+    investmentAmountLabel: "Importe de inversión (USD)",
+    noteToBusinessLabel: "Nota para el negocio (opcional)",
+    noteToBusinessPlaceholder: "Una breve presentación, su tesis de inversión, condiciones…",
+    cancel: "Cancelar",
+    creating: "Creando…",
+    createDeal: "Crear operación",
+  },
 };

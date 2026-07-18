@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 import { formatCurrency } from "@/lib/constants";
 
 export function StartDealButton({ businessId, businessName, suggestedAmount }: {
@@ -13,6 +14,7 @@ export function StartDealButton({ businessId, businessName, suggestedAmount }: {
   suggestedAmount: number;
 }) {
   const { user } = useAuth();
+  const { t } = useI18n();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(suggestedAmount);
@@ -52,20 +54,20 @@ export function StartDealButton({ businessId, businessName, suggestedAmount }: {
         className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-600 px-4 py-3 text-sm font-semibold text-white shadow-soft transition-all hover:bg-gold-700"
       >
         <Sparkles className="h-4 w-4" />
-        Start an investment deal
+        {t.deals.startInvestmentDeal}
       </button>
     );
   }
 
   return (
     <div className="mt-3 rounded-2xl border border-gold-200 bg-gold-50 p-5">
-      <p className="text-xs font-semibold uppercase tracking-wider text-gold-800">Start a deal</p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-gold-800">{t.deals.startDeal}</p>
       <h3 className="mt-1 font-display text-lg font-semibold text-brand-950">{businessName}</h3>
       <p className="mt-1 text-xs text-ink/60">
-        You&apos;ll move through LOI → APA → escrow → handover. We&rsquo;ll suggest {formatCurrency(amount)}.
+        {t.deals.processDescription.replace("{amount}", formatCurrency(amount))}
       </p>
 
-      <label className="mt-4 block text-sm font-medium text-brand-900">Investment amount (USD)</label>
+      <label className="mt-4 block text-sm font-medium text-brand-900">{t.deals.investmentAmountLabel}</label>
       <input
         type="number"
         min={10}
@@ -75,21 +77,21 @@ export function StartDealButton({ businessId, businessName, suggestedAmount }: {
         className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20"
       />
 
-      <label className="mt-3 block text-sm font-medium text-brand-900">Note to business (optional)</label>
+      <label className="mt-3 block text-sm font-medium text-brand-900">{t.deals.noteToBusinessLabel}</label>
       <textarea
         rows={2}
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        placeholder="A short intro, your investment thesis, conditions…"
+        placeholder={t.deals.noteToBusinessPlaceholder}
         className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20"
       />
 
       {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
 
       <div className="mt-4 flex gap-2">
-        <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>Cancel</Button>
+        <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>{t.deals.cancel}</Button>
         <Button onClick={submit} disabled={busy || amount < 10}>
-          {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Creating…</> : "Create deal"}
+          {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> {t.deals.creating}</> : t.deals.createDeal}
         </Button>
       </div>
     </div>

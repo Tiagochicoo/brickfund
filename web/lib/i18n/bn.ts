@@ -235,4 +235,15 @@ export const bn: TranslationDict = {
     raised: "সংগৃহীত",
     all: "সব",
   },
+  deals: {
+    startInvestmentDeal: "একটি বিনিয়োগ চুক্তি শুরু করুন",
+    startDeal: "একটি চুক্তি শুরু করুন",
+    processDescription: "আপনি LOI → APA → এসক্রো → হস্তান্তরের মধ্য দিয়ে যাবেন। আমরা {amount} প্রস্তাব করব।",
+    investmentAmountLabel: "বিনিয়োগের পরিমাণ (USD)",
+    noteToBusinessLabel: "ব্যবসার জন্য নোট (ঐচ্ছিক)",
+    noteToBusinessPlaceholder: "একটি সংক্ষিপ্ত পরিচিতি, আপনার বিনিয়োগ থিসিস, শর্তাবলী…",
+    cancel: "বাতিল",
+    creating: "তৈরি হচ্ছে…",
+    createDeal: "চুক্তি তৈরি করুন",
+  },
 };
