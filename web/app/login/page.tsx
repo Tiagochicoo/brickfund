@@ -83,17 +83,6 @@ export default function LoginPage() {
           {busy ? t.auth.signingIn : t.auth.signIn}
         </Button>
       </form>
-
-      <div className="mt-6 rounded-xl border border-cream-200 bg-cream-50 p-4 text-xs text-ink/60">
-        <p className="font-semibold text-brand-800">{t.auth.demoAccounts}</p>
-        <p className="mt-1">
-          {t.auth.demoBusiness} — <code className="text-brand-700">business@brickfund.local</code>
-        </p>
-        <p>
-          {t.auth.demoInvestor} — <code className="text-brand-700">investor@brickfund.local</code>
-        </p>
-        <p className="mt-1 text-ink/45">{t.auth.demoPassword}: brickfund1234</p>
-      </div>
     </AuthShell>
   );
 }
