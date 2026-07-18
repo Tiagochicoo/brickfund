@@ -20,11 +20,13 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
   }, []);
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative z-50" ref={ref}>
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-cream-100 hover:text-brand-800"
         aria-label="Change language"
+        aria-expanded={open}
       >
         <Globe className="h-4 w-4" />
         {!compact && <span>{current.native}</span>}
@@ -32,10 +34,11 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
       </button>
 
       {open && (
-        <div className="absolute end-0 mt-2 max-h-80 w-48 overflow-auto rounded-xl border border-cream-200 bg-white py-1 shadow-card">
+        <div className="absolute right-0 z-50 mt-2 max-h-80 w-48 overflow-auto rounded-xl border border-cream-200 bg-white py-1 shadow-card">
           {LOCALES.map((l) => (
             <button
               key={l.code}
+              type="button"
               onClick={() => {
                 setLocale(l.code);
                 setOpen(false);
