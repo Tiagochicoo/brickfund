@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
     ],
   },
   // Allow cross-origin HMR for development
-  allowedDevOrigins: ['localhost', '127.0.0.1'],
+  allowedDevOrigins: ['localhost', '127.0.0.1', 'www.brick-fund.com', 'brick-fund.com'],
 };
 
 export default nextConfig;
