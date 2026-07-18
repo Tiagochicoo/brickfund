@@ -185,7 +185,7 @@ export const ur: TranslationDict = {
     emptyBusinessTitle: "ابھی کوئی فہرست نہیں",
     emptyBusinessBody: "سرمایہ اکٹھا کرنا شروع کرنے کے لیے اپنی پہلی فہرست بنائیں۔",
     emptyInvestorTitle: "ابھی کوئی تجاویز نہیں",
-    emptyInvestorBody: "اپرا پہلا موقع تلاش کرنے کے لیے پلیٹ فارم دیکھیں۔",
+    emptyInvestorBody: "اپنا پہلا موقع تلاش کرنے کے لیے پلیٹ فارم دیکھیں۔",
     exploreExamples: "مثالیں دیکھیں",
     browseOpportunities: "مواقع دیکھیں",
     publishedLabel: "شائع شدہ",
