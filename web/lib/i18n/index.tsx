@@ -6,7 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useSyncExternalStore,
+  useState,
   type ReactNode,
 } from "react";
 import { detectBrowserLocale, isRTL, type Locale } from "./locales";
@@ -23,24 +23,7 @@ import { ur } from "./ur";
 
 const DICTS: Record<Locale, TranslationDict> = { en, pt, es, fr, zh, hi, ar, bn, ru, ur };
 const STORAGE_KEY = "brickfund-locale";
-
-function getSnapshot(): Locale {
-  if (typeof window === "undefined") return "en";
-  return (localStorage.getItem(STORAGE_KEY) as Locale) || detectBrowserLocale();
-}
-
-function getServerSnapshot(): Locale {
-  return "en";
-}
-
-function subscribe(onStoreChange: () => void): () => void {
-  window.addEventListener("storage", onStoreChange);
-  window.addEventListener("brickfund-locale-change", onStoreChange);
-  return () => {
-    window.removeEventListener("storage", onStoreChange);
-    window.removeEventListener("brickfund-locale-change", onStoreChange);
-  };
-}
+const EVENT_NAME = "brickfund-locale-change";
 
 type I18nContextValue = {
   locale: Locale;
@@ -52,26 +35,63 @@ type I18nContextValue = {
 const I18nContext = createContext<I18nContextValue | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const [locale, setLocale] = useState<Locale>(() => {
+    // Initial locale detection (SSR-safe)
+    if (typeof window === "undefined") return "en";
+    return (localStorage.getItem(STORAGE_KEY) as Locale) || detectBrowserLocale();
+  });
+
+  // Sync locale with localStorage and dispatch events
+  const handleSetLocale = useCallback((newLocale: Locale) => {
+    localStorage.setItem(STORAGE_KEY, newLocale);
+    window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: newLocale }));
+    setLocale(newLocale);
+    document.documentElement.lang = newLocale;
+    document.documentElement.dir = isRTL(newLocale) ? "rtl" : "ltr";
+  }, []);
+
+  // Listen for locale changes from other tabs/components
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY && e.newValue) {
+        setLocale(e.newValue as Locale);
+        document.documentElement.lang = e.newValue as Locale;
+        document.documentElement.dir = isRTL(e.newValue as Locale) ? "rtl" : "ltr";
+      }
+    };
+
+    const handleCustomEvent = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) {
+        setLocale(customEvent.detail);
+        document.documentElement.lang = customEvent.detail;
+        document.documentElement.dir = isRTL(customEvent.detail) ? "rtl" : "ltr";
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener(EVENT_NAME, handleCustomEvent);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener(EVENT_NAME, handleCustomEvent);
+    };
+  }, []);
+
+  // Update document attributes when locale changes
+  useEffect(() => {
+    const safeLocale = DICTS[locale] ? locale : "en";
+    document.documentElement.lang = safeLocale;
+    document.documentElement.dir = isRTL(safeLocale) ? "rtl" : "ltr";
+  }, [locale]);
+
   const safeLocale = DICTS[locale] ? locale : "en";
   const t = DICTS[safeLocale];
   const rtl = isRTL(safeLocale);
 
-  useEffect(() => {
-    document.documentElement.lang = safeLocale;
-    document.documentElement.dir = isRTL(safeLocale) ? "rtl" : "ltr";
-  }, [safeLocale]);
-
-  const setLocale = useCallback((l: Locale) => {
-    localStorage.setItem(STORAGE_KEY, l);
-    window.dispatchEvent(new Event("brickfund-locale-change"));
-    document.documentElement.lang = l;
-    document.documentElement.dir = isRTL(l) ? "rtl" : "ltr";
-  }, []);
-
   const value = useMemo(
-    () => ({ locale: safeLocale, t, rtl, setLocale }),
-    [safeLocale, t, rtl, setLocale]
+    () => ({ locale: safeLocale, t, rtl, setLocale: handleSetLocale }),
+    [safeLocale, t, rtl, handleSetLocale]
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
