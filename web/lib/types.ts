@@ -1,5 +1,5 @@
 export const PB_URL =
-  process.env.NEXT_PUBLIC_PB_URL || "https://api.brick-fund.com";
+  process.env.NEXT_PUBLIC_PB_URL || "http://127.0.0.1:8090";
 
 export type Role = "business" | "investor";
 
