@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, ArrowLeft, Target, TrendingUp, CheckCircle2, ShieldCheck } from "lucide-react";
 import { getBusiness } from "@/lib/api";
 import { CATEGORIES, formatCurrency, pct } from "@/lib/constants";
@@ -11,6 +12,7 @@ import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { StartDealButton } from "@/components/deals/StartDealButton";
 import type { Business, User } from "@/lib/types";
+import { PB_URL } from "@/lib/types";
 
 const BANNERS: Record<string, string> = {
   restaurant: "from-amber-500 to-rose-500",
@@ -22,6 +24,18 @@ const BANNERS: Record<string, string> = {
   bakery: "from-yellow-500 to-orange-600",
   bar: "from-violet-600 to-indigo-700",
   other: "from-brand-500 to-brand-700",
+};
+
+const UNSPLASH_IMAGES: Record<string, string> = {
+  cafe: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80&auto=format&fit=crop",
+  restaurant: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80&auto=format&fit=crop",
+  bakery: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80&auto=format&fit=crop",
+  gym: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80&auto=format&fit=crop",
+  barber: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&q=80&auto=format&fit=crop",
+  salon: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80&auto=format&fit=crop",
+  retail: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80&auto=format&fit=crop",
+  bar: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800&q=80&auto=format&fit=crop",
+  other: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80&auto=format&fit=crop",
 };
 
 export default function BusinessDetailPage() {
@@ -63,6 +77,10 @@ export default function BusinessDetailPage() {
   const percent = pct(business.fundingRaised, business.fundingGoal);
   const remaining = Math.max(0, business.fundingGoal - business.fundingRaised);
   const owner = business.expand?.owner as User | undefined;
+  const hasImage = business.image && business.image.length > 0;
+  const imageUrl = hasImage
+    ? `${PB_URL}/api/files/businesses/${business.id}/${business.image}`
+    : UNSPLASH_IMAGES[business.category] ?? UNSPLASH_IMAGES.other;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -72,9 +90,18 @@ export default function BusinessDetailPage() {
       </Link>
 
       <div className={`relative mt-4 flex h-48 items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br ${BANNERS[business.category] ?? BANNERS.other} sm:h-64`}>
+        <Image
+          src={imageUrl}
+          alt={business.name}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/50" />
         <div className="bg-grid absolute inset-0 opacity-20" aria-hidden="true" />
         <span className="text-6xl drop-shadow sm:text-7xl" aria-hidden="true">{cat.emoji}</span>
-        <div className="absolute left-5 top-5">
+        <div className="absolute left-5 top-5 z-10">
           <InvestmentPill type={business.investmentType} />
         </div>
       </div>
