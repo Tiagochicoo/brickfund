@@ -16,52 +16,52 @@ Businesses list funding opportunities (a restaurant expanding its terrace, a bar
 
 ## 🛠 Tech Stack
 
-| Layer    | Technology                                      |
-| -------- | ----------------------------------------------- |
-| Frontend | Next.js 16 (App Router), React 19, Tailwind v4 |
-| Icons    | lucide-react                                    |
-| Backend  | PocketBase v0.39 (embedded SQLite + REST API)  |
-| Auth     | PocketBase auth (email/password, role-based)   |
+| Layer         | Technology                                            |
+| ------------- | ----------------------------------------------------- |
+| Frontend      | Next.js 16 (App Router, Turbopack), React 19.2, Tailwind v4 |
+| Icons         | lucide-react                                          |
+| Backend (BaaS)| PocketBase v0.39 (embedded SQLite + REST API)         |
+| Auth          | PocketBase auth (email/password, role-based)          |
+| Payments      | Stripe Connect (Express accounts, separate-charges + escrow) |
+| E-signatures  | Documenso Community Edition (self-hosted, free, unlimited) |
+| Email         | Resend (Documenso SMTP)                               |
+
+## 💸 Revenue model
+
+Every funded deal pays a platform fee (default 3%, configurable via `PLATFORM_FEE_PERCENT`). Funds are held by Stripe on the platform balance until both parties confirm handover. The seller's share is then released via a Stripe Transfer with `source_transaction` (guarantees the transfer won't fail).
 
 ## 📁 Project Structure
 
 ```
 brickfund/
 ├── backend/
-│   ├── pocketbase              # precompiled binary (macOS arm64)
-│   ├── pb_migrations/
-│   │   ├── 1739800000_create_collections.js   # schema (users + businesses)
-│   │   ├── 1739800001_set_business_rules.js   # API access rules
-│   │   └── 1739800002_seed_data.js            # 6 sample businesses + 2 users
-│   ├── setup.sh                # one-command bootstrap
-│   └── pb_data/                # auto-generated (gitignored)
-│
-└── web/
-    ├── app/
-    │   ├── page.tsx            # landing page (hero, featured listings, CTA)
-    │   ├── businesses/
-    │   │   ├── page.tsx        # marketplace (filter + search)
-    │   │   └── [id]/page.tsx   # business detail
-    │   ├── login/              # login page
-    │   ├── register/           # register (business/investor toggle)
-    │   ├── forgot-password/    # password reset request
-    │   ├── logout/             # clears session, redirects
-    │   ├── dashboard/          # role-aware dashboard
-    │   └── not-found.tsx       # 404
-    ├── components/
-    │   ├── Navbar.tsx          # responsive nav with auth state
-    │   ├── Footer.tsx
-    │   ├── BusinessCard.tsx    # listing card with funding progress
-    │   ├── InvestmentPill.tsx  # colored type badge
-    │   ├── AuthShell.tsx       # split-screen layout for auth pages
-    │   ├── Logo.tsx
-    │   └── ui.tsx              # Input, Button, Label primitives
-    └── lib/
-        ├── pb.ts               # PocketBase client singleton
-        ├── auth.tsx            # AuthProvider + useAuth (useSyncExternalStore)
-        ├── api.ts              # server-side data fetching
-        ├── types.ts            # shared TypeScript types
-        └── constants.ts        # investment types, categories, formatters
+│   ├── pocketbase                # precompiled binary
+│   └── pb_migrations/
+│       ├── 1739800000_create_collections.js
+│       ├── 1739800001_set_business_rules.js
+│       ├── 1739800002_seed_data.js
+│       ├── 1739800003_add_city_country.js
+│       └── 1739800004_create_deal_collections.js   # deals, deal_events, webhook_events, stripe_accounts
+├── web/
+│   ├── app/
+│   │   ├── businesses/            # public marketplace
+│   │   ├── deals/                 # deal room (LOI → APA → escrow → release)
+│   │   ├── sellers/onboarding/    # Stripe Connect Express onboarding
+│   │   ├── api/
+│   │   │   ├── webhooks/stripe/        # Stripe → deal state machine
+│   │   │   ├── webhooks/documenso/     # Documenso → deal state machine
+│   │   │   ├── deals/[id]/...          # sign-loi, sign-apa, fund, signing-url, confirm-handover, resolve
+│   │   │   └── sellers/onboard/        # Stripe Express onboarding link
+│   │   ├── dashboard/
+│   │   └── ...
+│   ├── components/deals/          # DealActions, DealTimeline, StateBadge, StartDealButton
+│   └── lib/
+│       ├── server/                # env, pb-admin, stripe, documenso, deals, session, types
+│       ├── auth.tsx               # client-side PocketBase authStore
+│       ├── api.ts                 # public business reads
+│       └── ...
+├── docker-compose.yml             # Documenso CE + Postgres (PocketBase runs as binary)
+└── docs/DEPLOY-FREE.md            # $0/month production deployment guide
 ```
 
 ## 🚀 Quick Start
@@ -73,12 +73,18 @@ cd backend
 ./setup.sh
 ```
 
-This runs migrations, creates a superuser, and starts the server at `http://127.0.0.1:8090`.
+PocketBase at http://127.0.0.1:8090. Admin UI: `/_/`. Superuser: `admin@brickfund.local` / `brickfund1234`.
 
-- **Admin dashboard:** http://127.0.0.1:8090/_/
-- **Superuser:** `admin@brickfund.local` / `brickfund1234`
+### 2. Documenso + Postgres
 
-### 2. Frontend (Next.js)
+```bash
+# From repo root — Documenso CE on http://localhost:3001
+docker compose up -d
+```
+
+Open http://localhost:3001, create admin, generate API key → paste into `web/.env.local` as `DOCUMENSO_API_TOKEN`. Create LOI + APA templates, copy IDs into env. See `docs/DEPLOY-FREE.md`.
+
+### 3. Frontend (Next.js 16)
 
 ```bash
 cd web
@@ -86,7 +92,14 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000
+Open http://localhost:3000.
+
+### 4. Stripe webhooks (local dev)
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+# Copy whsec_... into STRIPE_WEBHOOK_SECRET
+```
 
 ## 🧑 Demo Accounts
 
@@ -106,40 +119,41 @@ Open http://localhost:3000
 | Revenue Share    | Investors earn a % of monthly revenue       |
 | Convertible Note | Debt that converts to equity at next round  |
 
-## 🏪 Seeded Businesses
+## 🤝 Deal flow
 
-1. **Bella Vista Trattoria** — Restaurant, Growth — expanding terrace
-2. **Sharp & Co. Barbershop** — Barber, Loan — relocating
-3. **Iron Temple Gym** — Gym, Seed — new opening
-4. **Morning Glory Café** — Café, Revenue Share — second location
-5. **Bloom & Co.** — Retail, Equity — scaling to 3 neighborhoods
-6. **Crust Artisan Bakery** — Bakery, Convertible Note — new ovens
+```
+1. Investor browses /businesses, clicks "Start an investment deal"
+2. POST /api/deals creates deal in state=negotiating
+3. Either party sends LOI via Documenso → state=loi_sent → loi_signed
+4. Either party sends APA → state=apa_sent → apa_signed (binding)
+5. Buyer funds escrow via Stripe (separate-charges model) → state=funds_held
+6. Both parties click "Confirm handover" → state=handover_confirmed
+7. Server calls stripe.transfers.create with source_transaction → state=completed
+   Platform fee stays as residual on platform balance.
+```
 
 ## 💻 Development
 
 ```bash
 cd web
-npm run dev      # dev server
+npm run dev      # dev server (Turbopack)
 npm run build    # production build
-npm run lint     # eslint
+npm run lint     # eslint (flat config)
 ```
 
 ## 🔐 API Access Rules
 
-**Users collection:**
-- List: authenticated only
-- View: public (email field hidden by default)
-- Create: open (registration)
-- Update/Delete: own record only
+**Users collection:** list authenticated only · view public · create open · update/delete own.
 
-**Businesses collection:**
-- List/View: published listings are public; investors + owners see all
-- Create: business role only
-- Update/Delete: owner only
+**Businesses collection:** published public · create business role · update/delete owner.
+
+**Deals / deal_events:** visible only to buyer, seller, or admin. Created by buyer (via API route that verifies auth cookie + creates as admin).
+
+**Webhook events / stripe_accounts:** admin only.
 
 ## 📄 License
 
-MIT
+MIT.
 
 ---
 

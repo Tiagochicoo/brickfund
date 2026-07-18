@@ -10,13 +10,13 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'api-brickfund.t-pereira.com',
+        hostname: 'api.brick-fund.com',
         pathname: '/api/files/**',
       },
     ],
   },
   // Allow cross-origin HMR for development
-  allowedDevOrigins: ['brickfund.t-pereira.com'],
+  allowedDevOrigins: ['www.brick-fund.com', 'brick-fund.com', 'localhost'],
 };
 
 export default nextConfig;

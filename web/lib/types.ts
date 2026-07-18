@@ -1,5 +1,5 @@
 export const PB_URL =
-  process.env.NEXT_PUBLIC_PB_URL || "https://api.brickfund.t-pereira.com";
+  process.env.NEXT_PUBLIC_PB_URL || "https://api.brick-fund.com";
 
 export type Role = "business" | "investor";
 
@@ -41,6 +41,8 @@ export interface User extends BaseRecord {
   budgetMax?: number;
   phone?: string;
   location?: string;
+  city?: string;
+  country?: string;
   avatar?: string;
 }
 
@@ -50,6 +52,8 @@ export interface Business extends BaseRecord {
   category: Category;
   investmentType: InvestmentType;
   location: string;
+  city?: string;
+  country?: string;
   pitch: string;
   description?: string;
   fundingGoal: number;
