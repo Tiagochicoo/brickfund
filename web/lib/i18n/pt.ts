@@ -21,7 +21,7 @@ export const pt: TranslationDict = {
       "A plataforma onde empresas locais encontram investidores que acreditam no comércio de rua.",
     platform: "Plataforma",
     exploreBusinesses: "Explorar empresas",
-    raiseCapital: "Capitar financiamento",
+    raiseCapital: "Captar financiamento",
     becomeInvestor: "Tornar-se investidor",
     company: "Empresa",
     howItWorks: "Como funciona",
@@ -36,7 +36,7 @@ export const pt: TranslationDict = {
     heroSubtitle:
       "O Brickfund liga empresas locais rentáveis a investidores — desde um restaurante a expandir o terraço até um ginásio a abrir portas.",
     exploreOpportunities: "Explorar oportunidades",
-    raiseCapital: "Capitar financiamento",
+    raiseCapital: "Captar financiamento",
     statRaised: "Capital captado",
     statBusinesses: "Empresas financiadas",
     statInvestors: "Investidores ativos",
