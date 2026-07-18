@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
 import { useAuth } from "@/lib/auth";
@@ -15,12 +15,37 @@ const LINKS = [
 export default function Navbar() {
   const { user, loading } = useAuth();
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [open]);
+
+  const toggleMenu = () => {
+    console.log('[Navbar] Toggle menu clicked, current state:', open);
+    setOpen(prev => {
+      const newState = !prev;
+      console.log('[Navbar] New state will be:', newState);
+      return newState;
+    });
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-cream-200 bg-cream-50/80 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Logo />
 
+        {/* Desktop Navigation */}
         <div className="hidden items-center gap-1 md:flex">
           {LINKS.map((l) => (
             <Link
@@ -33,6 +58,7 @@ export default function Navbar() {
           ))}
         </div>
 
+        {/* Desktop Auth Buttons */}
         <div className="hidden items-center gap-2 md:flex">
           {loading ? (
             <div className="h-9 w-24 animate-pulse rounded-lg bg-cream-100" />
@@ -69,17 +95,25 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* Mobile Menu Button */}
         <button
-          className="grid h-10 w-10 place-items-center rounded-lg text-brand-900 md:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
+          type="button"
+          className="grid h-10 w-10 place-items-center rounded-lg text-brand-900 md:hidden hover:bg-cream-100 focus:outline-none focus:ring-2 focus:ring-brand-500 active:bg-cream-200"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleMenu();
+          }}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </nav>
 
-      {open && (
-        <div className="border-t border-cream-200 bg-cream-50 md:hidden">
+      {/* Mobile Menu */}
+      <div ref={menuRef} className={open ? "block md:hidden" : "hidden md:hidden"}>
+        <div className="border-t border-cream-200 bg-cream-50">
           <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3 sm:px-6">
             {LINKS.map((l) => (
               <Link
@@ -129,7 +163,7 @@ export default function Navbar() {
             )}
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

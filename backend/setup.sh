@@ -21,5 +21,5 @@ echo "→ ensuring superuser…"
 ./pocketbase superuser upsert "$PB_ADMIN_EMAIL" "$PB_ADMIN_PASS"
 
 # 4. start server
-echo "→ starting PocketBase on http://127.0.0.1:$PB_PORT"
-exec ./pocketbase serve --http=127.0.0.1:$PB_PORT
+echo "→ starting PocketBase on http://0.0.0.0:$PB_PORT"
+exec ./pocketbase serve --http=0.0.0.0:$PB_PORT
