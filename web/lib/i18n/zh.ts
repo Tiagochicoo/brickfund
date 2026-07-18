@@ -235,4 +235,15 @@ export const zh: TranslationDict = {
     raised: "已筹",
     all: "全部",
   },
+  deals: {
+    startInvestmentDeal: "启动投资交易",
+    startDeal: "启动交易",
+    processDescription: "您将经过意向书 → 资产购买协议 → 托管 → 交接。我们将建议 {amount}。",
+    investmentAmountLabel: "投资金额（美元）",
+    noteToBusinessLabel: "给商户的备注（可选）",
+    noteToBusinessPlaceholder: "简短介绍、您的投资论点、条件…",
+    cancel: "取消",
+    creating: "创建中…",
+    createDeal: "创建交易",
+  },
 };

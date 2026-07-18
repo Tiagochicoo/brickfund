@@ -235,4 +235,15 @@ export const ar: TranslationDict = {
     raised: "جُمع",
     all: "الكل",
   },
+  deals: {
+    startInvestmentDeal: "بدء صفقة استثمار",
+    startDeal: "بدء الصفقة",
+    processDescription: "ستنتقل عبر LOI → APA → الضمان → التسليم. سنقترح {amount}.",
+    investmentAmountLabel: "مبلغ الاستثمار (USD)",
+    noteToBusinessLabel: "ملاحظة للعمل (اختياري)",
+    noteToBusinessPlaceholder: "مقدمة قصيرة، أطروحة استثمارك، شروط…",
+    cancel: "إلغاء",
+    creating: "جارٍ الإنشاء…",
+    createDeal: "إنشاء الصفقة",
+  },
 };

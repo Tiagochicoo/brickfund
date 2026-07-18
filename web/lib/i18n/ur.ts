@@ -235,4 +235,15 @@ export const ur: TranslationDict = {
     raised: "اکٹھا",
     all: "سب",
   },
+  deals: {
+    startInvestmentDeal: "سرمایہ کاری کا سودا شروع کریں",
+    startDeal: "سودا شروع کریں",
+    processDescription: "آپ LOI → APA → ایسکرو → ہینڈ اوور سے گزریں گے۔ ہم {amount} کی تجویز دیں گے۔",
+    investmentAmountLabel: "سرمایہ کاری کی رقم (USD)",
+    noteToBusinessLabel: "کاروبار کے لیے نوٹ (اختیاری)",
+    noteToBusinessPlaceholder: "ایک مختصر تعارف، آپ کی سرمایہ کاری کا خیال، شرائط…",
+    cancel: "منسوخ",
+    creating: "بنا رہا ہے…",
+    createDeal: "سودا بنائیں",
+  },
 };

@@ -127,6 +127,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="for-businesses" className="border-y border-cream-200 bg-brand-950 text-white">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider text-gold-400">{t.home.businessBadge}</p>
+            <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl text-white">{t.home.businessTitle}</h2>
+            <p className="mt-4 max-w-2xl mx-auto text-white/65">{t.home.businessBody}</p>
+          </div>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {items.slice(0, 3).map((b) => <BusinessCard key={b.id} business={b} />)}
+          </div>
+          <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/register" className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3.5 text-sm font-semibold text-brand-950 shadow-soft transition-all hover:bg-gold-300 sm:w-auto">
+              {t.home.startRaising}
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+            <Link href="/businesses" className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gold-400/30 bg-white/5 px-6 py-3.5 text-sm font-semibold text-gold-400 shadow-soft transition-all hover:bg-white/10 sm:w-auto">
+              {t.home.viewAll}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 to-brand-900 px-6 py-14 text-center shadow-card sm:px-12">
           <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-400/20 blur-3xl" aria-hidden="true" />

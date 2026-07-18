@@ -18,8 +18,10 @@ export type TranslationDict = {
     step3Title: string; step3Body: string; investorBadge: string; investorTitle: string;
     investorBody: string; startInvesting: string; perkVetted: string; perkVettedBody: string;
     perkReturns: string; perkReturnsBody: string; perkImpact: string; perkImpactBody: string;
-    perkFlexible: string; perkFlexibleBody: string; ctaTitle: string; ctaBody: string;
-    ctaCreate: string; ctaBrowse: string;
+    perkFlexible: string; perkFlexibleBody: string; businessBadge: string; businessTitle: string;
+    businessBody: string; startRaising: string; perkSimple: string; perkSimpleBody: string;
+    perkDirect: string; perkDirectBody: string; perkControl: string; perkControlBody: string;
+    ctaTitle: string; ctaBody: string; ctaCreate: string; ctaBrowse: string;
   };
   businesses: {
     title: string; subtitle: string; allCities: string; searchPlaceholder: string;
@@ -74,6 +76,12 @@ export type TranslationDict = {
     salon: string; bakery: string; bar: string; other: string;
   };
   misc: { of: string; raised: string; all: string };
+  deals: {
+    startInvestmentDeal: string; startDeal: string;
+    processDescription: string; investmentAmountLabel: string;
+    noteToBusinessLabel: string; noteToBusinessPlaceholder: string;
+    cancel: string; creating: string; createDeal: string;
+  };
 };
 
 export const en: TranslationDict = {
@@ -147,6 +155,17 @@ export const en: TranslationDict = {
     perkImpactBody: "Fund the main street you walk every day.",
     perkFlexible: "Flexible deals",
     perkFlexibleBody: "From seed equity to short-term loans.",
+    businessBadge: "For businesses",
+    businessTitle: "Raise capital on your terms",
+    businessBody:
+      "Connect with investors who understand your industry. List your opportunity and get the funding you need to grow — without the banks.",
+    startRaising: "Create Your Business",
+    perkSimple: "Simple process",
+    perkSimpleBody: "Create a listing in minutes, not weeks.",
+    perkDirect: "Direct access",
+    perkDirectBody: "Connect with investors directly — no middlemen.",
+    perkControl: "Keep control",
+    perkControlBody: "Set your own terms and keep ownership of your business.",
     ctaTitle: "Ready to grow on main street?",
     ctaBody: "Whether you're raising or investing, your next move starts here.",
     ctaCreate: "Create your account",
@@ -321,5 +340,16 @@ export const en: TranslationDict = {
     of: "of",
     raised: "raised",
     all: "All",
+  },
+  deals: {
+    startInvestmentDeal: "Start an investment deal",
+    startDeal: "Start a deal",
+    processDescription: "You'll move through LOI → APA → escrow → handover. We'll suggest {amount}.",
+    investmentAmountLabel: "Investment amount (USD)",
+    noteToBusinessLabel: "Note to business (optional)",
+    noteToBusinessPlaceholder: "A short intro, your investment thesis, conditions…",
+    cancel: "Cancel",
+    creating: "Creating…",
+    createDeal: "Create deal",
   },
 };

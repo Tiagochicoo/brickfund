@@ -246,4 +246,15 @@ export const fr: TranslationDict = {
     raised: "levés",
     all: "Tous",
   },
+  deals: {
+    startInvestmentDeal: "Commencer une transaction d'investissement",
+    startDeal: "Commencer une transaction",
+    processDescription: "Vous passerez par LOI → APA → séquestre → remise. Nous suggérerons {amount}.",
+    investmentAmountLabel: "Montant de l'investissement (USD)",
+    noteToBusinessLabel: "Note pour le commerce (facultatif)",
+    noteToBusinessPlaceholder: "Une brève présentation, votre thèse d'investissement, conditions…",
+    cancel: "Annuler",
+    creating: "Création…",
+    createDeal: "Créer la transaction",
+  },
 };

@@ -235,4 +235,15 @@ export const ru: TranslationDict = {
     raised: "собрано",
     all: "Все",
   },
+  deals: {
+    startInvestmentDeal: "Начать инвестиционную сделку",
+    startDeal: "Начать сделку",
+    processDescription: "Вы пройдёте через LOI → APA → эскроу → передача. Мы предложим {amount}.",
+    investmentAmountLabel: "Сумма инвестиций (USD)",
+    noteToBusinessLabel: "Заметка бизнесу (необязательно)",
+    noteToBusinessPlaceholder: "Краткое представление, ваша инвестиционная идея, условия…",
+    cancel: "Отмена",
+    creating: "Создание…",
+    createDeal: "Создать сделку",
+  },
 };
