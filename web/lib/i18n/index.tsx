@@ -49,7 +49,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Sync locale with localStorage and dispatch events
   const handleSetLocale = useCallback((newLocale: Locale) => {
     localStorage.setItem(STORAGE_KEY, newLocale);
     window.dispatchEvent(new CustomEvent<string>(EVENT_NAME, { detail: newLocale }));
@@ -58,13 +57,13 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     document.documentElement.dir = isRTL(newLocale) ? "rtl" : "ltr";
   }, []);
 
-  // Listen for locale changes from other tabs/components
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY && e.newValue) {
-        setLocale(e.newValue as Locale);
-        document.documentElement.lang = e.newValue as Locale;
-        document.documentElement.dir = isRTL(e.newValue as Locale) ? "rtl" : "ltr";
+        const newLocale = e.newValue as Locale;
+        setLocale(newLocale);
+        document.documentElement.lang = newLocale;
+        document.documentElement.dir = isRTL(newLocale) ? "rtl" : "ltr";
       }
     };
 
@@ -87,7 +86,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Update document attributes when locale changes
   useEffect(() => {
     const safeLocale = DICTS[locale] ? locale : "en";
     document.documentElement.lang = safeLocale;
