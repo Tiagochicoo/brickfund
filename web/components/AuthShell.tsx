@@ -56,7 +56,7 @@ export default function AuthShell({
 
       {/* Form panel */}
       <section className="flex items-center justify-center px-4 py-12 sm:px-8">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md pt-8 lg:pt-0">
           <h1 className="font-display text-3xl font-semibold tracking-tight text-brand-900">
             {title}
           </h1>
