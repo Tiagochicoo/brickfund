@@ -35,6 +35,16 @@
   --color-cream-200: #f3ecdf;
 
   --color-ink: #0c1512;
+
+  /* Dark mode colors */
+  --color-dark-bg-primary: #0a1f16;
+  --color-dark-bg-secondary: #14382e;
+  --color-dark-bg-tertiary: #0c1512;
+  --color-dark-gold-accent: #e8c772;
+  --color-dark-gold-accent-hover: #dfbd68;
+  --color-dark-text-primary: #ffffff;
+  --color-dark-text-secondary: #d1d5db;
+  --color-dark-border: #1c5442;
 }
 
 :root {
@@ -42,8 +52,17 @@
   --foreground: #0c1512;
 }
 
+.dark {
+  --background: #0a1f16;
+  --foreground: #ffffff;
+}
+
 * {
   border-color: var(--color-cream-200);
+}
+
+.dark * {
+  border-color: #1c5442;
 }
 
 html {
@@ -72,16 +91,34 @@ body {
   background-size: 44px 44px;
 }
 
+.dark .bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(232, 199, 114, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(232, 199, 114, 0.06) 1px, transparent 1px);
+}
+
 .shadow-soft {
   box-shadow:
     0 1px 2px rgba(12, 21, 18, 0.04),
     0 8px 24px -12px rgba(12, 21, 18, 0.12);
 }
 
+.dark .shadow-soft {
+  box-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.04),
+    0 8px 24px -12px rgba(255, 255, 255, 0.12);
+}
+
 .shadow-card {
   box-shadow:
     0 1px 3px rgba(12, 21, 18, 0.05),
     0 20px 40px -24px rgba(12, 21, 18, 0.18);
+}
+
+.dark .shadow-card {
+  box-shadow:
+    0 1px 3px rgba(255, 255, 255, 0.05),
+    0 20px 40px -24px rgba(255, 255, 255, 0.18);
 }
 
 @keyframes float-up {

@@ -9,13 +9,13 @@ export default function Logo({
   light?: boolean;
   asLink?: boolean;
 }) {
-  const text = light ? "text-white" : "text-brand-900";
+  const text = light ? "text-white" : "text-brand-900 dark:text-gold-100";
   const logoContent = (
     <>
-      <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 shadow-soft ring-1 ring-brand-900/10">
+      <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 shadow-soft ring-1 ring-brand-900/10 dark:from-brand-700 dark:to-brand-900 dark:ring-gold-500/20">
         <svg
           viewBox="0 0 24 24"
-          className="h-5 w-5 text-gold-300"
+          className="h-5 w-5 text-gold-300 dark:text-gold-400"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -29,7 +29,7 @@ export default function Logo({
         </svg>
       </span>
       <span className={`font-display text-xl font-semibold tracking-tight ${text}`}>
-        Brick<span className="text-gold-500">fund</span>
+        Brick<span className="text-gold-500 dark:text-gold-400">fund</span>
       </span>
     </>
   );
