@@ -35,11 +35,19 @@ type I18nContextValue = {
 const I18nContext = createContext<I18nContextValue | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>(() => {
-    // Initial locale detection (SSR-safe)
-    if (typeof window === "undefined") return "en";
-    return (localStorage.getItem(STORAGE_KEY) as Locale) || detectBrowserLocale();
-  });
+  const [locale, setLocale] = useState<Locale>("en");
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY) as Locale | null;
+    if (stored && DICTS[stored]) {
+      setLocale(stored);
+      return;
+    }
+    const detected = detectBrowserLocale();
+    if (detected !== "en" && DICTS[detected]) {
+      setLocale(detected);
+    }
+  }, []);
 
   // Sync locale with localStorage and dispatch events
   const handleSetLocale = useCallback((newLocale: Locale) => {
@@ -63,9 +71,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const handleCustomEvent = (e: Event) => {
       const customEvent = e as CustomEvent<string>;
       if (customEvent.detail) {
-        setLocale(customEvent.detail);
-        document.documentElement.lang = customEvent.detail;
-        document.documentElement.dir = isRTL(customEvent.detail) ? "rtl" : "ltr";
+        const newLocale = customEvent.detail as Locale;
+        setLocale(newLocale);
+        document.documentElement.lang = newLocale;
+        document.documentElement.dir = isRTL(newLocale) ? "rtl" : "ltr";
       }
     };
 
