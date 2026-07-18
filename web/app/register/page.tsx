@@ -10,6 +10,7 @@ import LocationSelect from "@/components/LocationSelect";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
 import type { Role } from "@/lib/types";
+import RoleButton from "@/components/RoleButton";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -110,7 +111,7 @@ export default function RegisterPage() {
         </>
       }
     >
-      <div className="mb-6 grid grid-cols-2 gap-2 rounded-2xl bg-cream-100 p-1.5">
+      <div className="relative mb-6 grid grid-cols-2 gap-2 rounded-2xl bg-cream-100 p-1.5">
         <RoleButton
           active={role === "business"}
           onClick={() => setRole("business")}
@@ -218,33 +219,5 @@ export default function RegisterPage() {
         <p className="text-center text-xs text-ink/40">{t.auth.termsNotice}</p>
       </form>
     </AuthShell>
-  );
-}
-
-function RoleButton({
-  active,
-  onClick,
-  icon,
-  title,
-  sub,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  title: string;
-  sub: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex flex-col items-center gap-1 rounded-xl px-3 py-3 text-center transition-all ${
-        active ? "bg-white text-brand-800 shadow-soft ring-1 ring-brand-500/20" : "text-ink/55 hover:text-brand-700"
-      }`}
-    >
-      {icon}
-      <span className="text-sm font-semibold">{title}</span>
-      <span className="text-[11px] opacity-70">{sub}</span>
-    </button>
   );
 }

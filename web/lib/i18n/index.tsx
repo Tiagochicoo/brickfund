@@ -44,7 +44,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   // Sync locale with localStorage and dispatch events
   const handleSetLocale = useCallback((newLocale: Locale) => {
     localStorage.setItem(STORAGE_KEY, newLocale);
-    window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: newLocale }));
+    window.dispatchEvent(new CustomEvent<string>(EVENT_NAME, { detail: newLocale }));
     setLocale(newLocale);
     document.documentElement.lang = newLocale;
     document.documentElement.dir = isRTL(newLocale) ? "rtl" : "ltr";
@@ -61,7 +61,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     };
 
     const handleCustomEvent = (e: Event) => {
-      const customEvent = e as CustomEvent;
+      const customEvent = e as CustomEvent<string>;
       if (customEvent.detail) {
         setLocale(customEvent.detail);
         document.documentElement.lang = customEvent.detail;
