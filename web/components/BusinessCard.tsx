@@ -1,10 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 import type { Business } from "@/lib/types";
 import { PB_URL } from "@/lib/types";
-import { CATEGORIES, formatCurrency, pct } from "@/lib/constants";
+import { formatCurrency, pct } from "@/lib/constants";
 import InvestmentPill from "./InvestmentPill";
+import { useI18n } from "@/lib/i18n";
 
 const UNSPLASH_IMAGES: Record<string, string> = {
   cafe: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80&auto=format&fit=crop",
@@ -19,7 +22,8 @@ const UNSPLASH_IMAGES: Record<string, string> = {
 };
 
 export default function BusinessCard({ business }: { business: Business }) {
-  const cat = CATEGORIES[business.category] ?? CATEGORIES.other;
+  const { t } = useI18n();
+  const catLabel = t.categories[business.category];
   const percent = pct(business.fundingRaised, business.fundingGoal);
   const funded = percent >= 100;
   const hasImage = business.image && business.image.length > 0;
@@ -47,7 +51,7 @@ export default function BusinessCard({ business }: { business: Business }) {
         </div>
         {funded && (
           <span className="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-brand-700 ring-1 ring-white/60">
-            Funded
+            {t.businessDetail.fundedBadge}
           </span>
         )}
       </div>
@@ -59,9 +63,9 @@ export default function BusinessCard({ business }: { business: Business }) {
           </h3>
           <p className="mt-0.5 flex items-center gap-1 text-xs text-ink/55">
             <MapPin className="h-3.5 w-3.5" />
-            {business.location}
+            {business.city ? `${business.city}${business.country ? ", " + business.country : ""}` : business.location}
             <span className="mx-1 text-ink/30">•</span>
-            {cat.label}
+            {catLabel}
           </p>
         </div>
 
@@ -75,7 +79,7 @@ export default function BusinessCard({ business }: { business: Business }) {
               {formatCurrency(business.fundingRaised)}
             </span>
             <span className="text-ink/50">
-              of {formatCurrency(business.fundingGoal)}
+              {t.misc.of} {formatCurrency(business.fundingGoal)}
             </span>
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-cream-200">
@@ -85,7 +89,7 @@ export default function BusinessCard({ business }: { business: Business }) {
             />
           </div>
           <p className="mt-1.5 text-[11px] font-medium text-ink/45">
-            {percent}% raised
+            {percent}% {t.misc.raised}
           </p>
         </div>
       </div>

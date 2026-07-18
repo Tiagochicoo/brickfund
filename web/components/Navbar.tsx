@@ -1,51 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { useAuth } from "@/lib/auth";
-
-const LINKS = [
-  { href: "/businesses", label: "Explore" },
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#for-investors", label: "For investors" },
-];
+import { useI18n } from "@/lib/i18n";
 
 export default function Navbar() {
   const { user, loading } = useAuth();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [open]);
-
-  const toggleMenu = () => {
-    console.log('[Navbar] Toggle menu clicked, current state:', open);
-    setOpen(prev => {
-      const newState = !prev;
-      console.log('[Navbar] New state will be:', newState);
-      return newState;
-    });
-  };
+  const LINKS = [
+    { href: "/businesses", label: t.nav.explore },
+    ...(user ? [{ href: "/deals", label: "Deals" }] : []),
+    { href: "/#how-it-works", label: t.nav.howItWorks },
+    { href: "/#for-investors", label: t.nav.forInvestors },
+  ];
 
   return (
     <header className="sticky top-0 z-40 border-b border-cream-200 bg-cream-50/80 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Logo />
 
-        {/* Desktop Navigation */}
         <div className="hidden items-center gap-1 md:flex">
           {LINKS.map((l) => (
             <Link
@@ -58,8 +37,8 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Desktop Auth Buttons */}
         <div className="hidden items-center gap-2 md:flex">
+          <LanguageSwitcher />
           {loading ? (
             <div className="h-9 w-24 animate-pulse rounded-lg bg-cream-100" />
           ) : user ? (
@@ -68,13 +47,13 @@ export default function Navbar() {
                 href="/dashboard"
                 className="rounded-lg px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-cream-100 hover:text-brand-800"
               >
-                Dashboard
+                {t.nav.dashboard}
               </Link>
               <Link
                 href="/logout"
                 className="rounded-lg border border-cream-200 px-3.5 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-cream-100"
               >
-                Sign out
+                {t.nav.signOut}
               </Link>
             </>
           ) : (
@@ -83,37 +62,32 @@ export default function Navbar() {
                 href="/login"
                 className="rounded-lg px-3.5 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-cream-100"
               >
-                Sign in
+                {t.nav.signIn}
               </Link>
               <Link
                 href="/register"
                 className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-soft transition-all hover:bg-brand-800"
               >
-                Get started
+                {t.nav.getStarted}
               </Link>
             </>
           )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          type="button"
-          className="grid h-10 w-10 place-items-center rounded-lg text-brand-900 md:hidden hover:bg-cream-100 focus:outline-none focus:ring-2 focus:ring-brand-500 active:bg-cream-200"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleMenu();
-          }}
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <LanguageSwitcher compact />
+          <button
+            className="grid h-10 w-10 place-items-center rounded-lg text-brand-900"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={t.nav.toggleMenu}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </nav>
 
-      {/* Mobile Menu */}
-      <div ref={menuRef} className={open ? "block md:hidden" : "hidden md:hidden"}>
-        <div className="border-t border-cream-200 bg-cream-50">
+      {open && (
+        <div className="border-t border-cream-200 bg-cream-50 md:hidden">
           <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3 sm:px-6">
             {LINKS.map((l) => (
               <Link
@@ -133,14 +107,14 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                   className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink/80 hover:bg-cream-100"
                 >
-                  Dashboard
+                  {t.nav.dashboard}
                 </Link>
                 <Link
                   href="/logout"
                   onClick={() => setOpen(false)}
                   className="rounded-lg border border-cream-200 px-3 py-2.5 text-center text-sm font-medium text-ink/80"
                 >
-                  Sign out
+                  {t.nav.signOut}
                 </Link>
               </>
             ) : (
@@ -150,20 +124,20 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                   className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink/80 hover:bg-cream-100"
                 >
-                  Sign in
+                  {t.nav.signIn}
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setOpen(false)}
                   className="rounded-lg bg-brand-700 px-3 py-2.5 text-center text-sm font-semibold text-white"
                 >
-                  Get started
+                  {t.nav.getStarted}
                 </Link>
               </>
             )}
           </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }

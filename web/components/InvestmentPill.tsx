@@ -1,5 +1,8 @@
+"use client";
+
 import type { InvestmentType } from "@/lib/types";
-import { INVESTMENT_TYPES } from "@/lib/constants";
+import { getInvestmentTypeMeta } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 export default function InvestmentPill({
   type,
@@ -8,8 +11,8 @@ export default function InvestmentPill({
   type: InvestmentType;
   size?: "sm" | "md";
 }) {
-  const meta = INVESTMENT_TYPES[type];
-  if (!meta) return null;
+  const { t } = useI18n();
+  const meta = getInvestmentTypeMeta(type, t);
   const pad = size === "sm" ? "px-2.5 py-1 text-[11px]" : "px-3 py-1.5 text-xs";
   return (
     <span

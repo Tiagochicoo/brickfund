@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { Fraunces } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
+import { I18nProvider } from "@/lib/i18n";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -32,13 +33,16 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${fraunces.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-cream-50 text-ink">
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </AuthProvider>
+        <I18nProvider>
+          <AuthProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </AuthProvider>
+        </I18nProvider>
       </body>
     </html>
   );

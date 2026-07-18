@@ -6,39 +6,40 @@ import Link from "next/link";
 import { Loader2, Store, TrendingUp, Check } from "lucide-react";
 import AuthShell from "@/components/AuthShell";
 import { Button, ErrorNote, Input, Label } from "@/components/ui";
+import LocationSelect from "@/components/LocationSelect";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 import type { Role } from "@/lib/types";
-
-const INVESTOR_TYPES = [
-  { value: "individual", label: "Individual investor" },
-  { value: "firm", label: "Investment firm" },
-  { value: "fund", label: "Fund / family office" },
-] as const;
 
 export default function RegisterPage() {
   const { register } = useAuth();
+  const { t } = useI18n();
   const router = useRouter();
   const [role, setRole] = useState<Role>("business");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // shared
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [location, setLocation] = useState("");
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
 
-  // business
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
 
-  // investor
   const [investorType, setInvestorType] = useState<"individual" | "firm" | "fund">("individual");
   const [accredited, setAccredited] = useState(false);
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
   const [invCompany, setInvCompany] = useState("");
+
+  const INVESTOR_TYPES = [
+    { value: "individual" as const, label: t.auth.individualInvestor },
+    { value: "firm" as const, label: t.auth.investmentFirm },
+    { value: "fund" as const, label: t.auth.fundFamilyOffice },
+  ];
 
   function prettyError(err: unknown): string {
     const e = err as { response?: { data?: Record<string, { message?: string }> }; message?: string };
@@ -49,29 +50,32 @@ export default function RegisterPage() {
         .join("; ");
       if (msgs) return msgs;
     }
-    return e?.message || "Could not create your account. Please try again.";
+    return e?.message || t.auth.createError;
   }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (password !== passwordConfirm) {
-      setError("Passwords do not match.");
+      setError(t.auth.passwordMismatch);
       return;
     }
     if (password.length < 10) {
-      setError("Password must be at least 10 characters.");
+      setError(t.auth.passwordShort);
       return;
     }
     setBusy(true);
     try {
+      const fullLocation = city && country ? `${city}, ${country}` : "";
       const base = {
         email: email.trim(),
         password,
         passwordConfirm,
         name: name.trim(),
         role,
-        location: location.trim(),
+        location: fullLocation.trim(),
+        city: city.trim(),
+        country: country.trim(),
       };
       if (role === "business") {
         await register({ ...base, company: company.trim(), phone: phone.trim() });
@@ -95,193 +99,113 @@ export default function RegisterPage() {
 
   return (
     <AuthShell
-      title="Create your account"
-      subtitle="Join Brickfund as a business or an investor — it's free to start."
+      title={t.auth.createAccount}
+      subtitle={t.auth.registerSubtitle}
       footer={
         <>
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="font-semibold text-brand-700 underline-offset-2 hover:underline"
-          >
-            Sign in
+          {t.auth.haveAccount}{" "}
+          <Link href="/login" className="font-semibold text-brand-700 underline-offset-2 hover:underline">
+            {t.auth.signIn}
           </Link>
         </>
       }
     >
-      {/* Role toggle */}
       <div className="mb-6 grid grid-cols-2 gap-2 rounded-2xl bg-cream-100 p-1.5">
         <RoleButton
           active={role === "business"}
           onClick={() => setRole("business")}
           icon={<Store className="h-4 w-4" />}
-          title="I'm a business"
-          sub="Raise capital"
+          title={t.auth.roleBusiness}
+          sub={t.auth.roleBusinessSub}
         />
         <RoleButton
           active={role === "investor"}
           onClick={() => setRole("investor")}
           icon={<TrendingUp className="h-4 w-4" />}
-          title="I'm an investor"
-          sub="Fund businesses"
+          title={t.auth.roleInvestor}
+          sub={t.auth.roleInvestorSub}
         />
       </div>
 
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
           <Label htmlFor="name">
-            {role === "business" ? "Your name" : "Full name"}
+            {role === "business" ? t.auth.yourName : t.auth.fullName}
           </Label>
-          <Input
-            id="name"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Jane Doe"
-          />
+          <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" />
         </div>
 
         {role === "business" ? (
           <>
             <div>
-              <Label htmlFor="company">Business name</Label>
-              <Input
-                id="company"
-                required
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
-                placeholder="Bella Vista Trattoria"
-              />
+              <Label htmlFor="company">{t.auth.businessName}</Label>
+              <Input id="company" required value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Bella Vista Trattoria" />
             </div>
             <div>
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+351 912 345 678"
-              />
+              <Label htmlFor="phone">{t.auth.phone}</Label>
+              <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+351 912 345 678" />
             </div>
           </>
         ) : (
           <>
             <div>
-              <Label htmlFor="investorType">Investor type</Label>
+              <Label htmlFor="investorType">{t.auth.investorType}</Label>
               <div className="grid grid-cols-1 gap-2">
-                {INVESTOR_TYPES.map((t) => (
+                {INVESTOR_TYPES.map((it) => (
                   <button
-                    key={t.value}
+                    key={it.value}
                     type="button"
-                    onClick={() => setInvestorType(t.value)}
+                    onClick={() => setInvestorType(it.value)}
                     className={`flex items-center justify-between rounded-xl border px-4 py-2.5 text-left text-sm transition-all ${
-                      investorType === t.value
+                      investorType === it.value
                         ? "border-brand-500 bg-brand-50 text-brand-800 ring-1 ring-brand-500/30"
                         : "border-cream-200 bg-white text-ink/70 hover:bg-cream-50"
                     }`}
                   >
-                    {t.label}
-                    {investorType === t.value && <Check className="h-4 w-4 text-brand-600" />}
+                    {it.label}
+                    {investorType === it.value && <Check className="h-4 w-4 text-brand-600" />}
                   </button>
                 ))}
               </div>
             </div>
             <div>
-              <Label htmlFor="invCompany" hint="optional">
-                Firm / fund name
+              <Label htmlFor="invCompany" hint={t.auth.firmNameOptional}>
+                {t.auth.firmName}
               </Label>
-              <Input
-                id="invCompany"
-                value={invCompany}
-                onChange={(e) => setInvCompany(e.target.value)}
-                placeholder="Whitfield Capital"
-              />
+              <Input id="invCompany" value={invCompany} onChange={(e) => setInvCompany(e.target.value)} placeholder="Whitfield Capital" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label htmlFor="budgetMin" hint="€">
-                  Min budget
-                </Label>
-                <Input
-                  id="budgetMin"
-                  type="number"
-                  min={0}
-                  value={budgetMin}
-                  onChange={(e) => setBudgetMin(e.target.value)}
-                  placeholder="25000"
-                />
+                <Label htmlFor="budgetMin" hint="€">{t.auth.minBudget}</Label>
+                <Input id="budgetMin" type="number" min={0} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="25000" />
               </div>
               <div>
-                <Label htmlFor="budgetMax" hint="€">
-                  Max budget
-                </Label>
-                <Input
-                  id="budgetMax"
-                  type="number"
-                  min={0}
-                  value={budgetMax}
-                  onChange={(e) => setBudgetMax(e.target.value)}
-                  placeholder="250000"
-                />
+                <Label htmlFor="budgetMax" hint="€">{t.auth.maxBudget}</Label>
+                <Input id="budgetMax" type="number" min={0} value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} placeholder="250000" />
               </div>
             </div>
             <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-white p-3.5">
-              <input
-                type="checkbox"
-                checked={accredited}
-                onChange={(e) => setAccredited(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-cream-200 accent-brand-600"
-              />
-              <span className="text-sm text-ink/70">
-                I am an accredited / professional investor
-              </span>
+              <input type="checkbox" checked={accredited} onChange={(e) => setAccredited(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-cream-200 accent-brand-600" />
+              <span className="text-sm text-ink/70">{t.auth.accredited}</span>
             </label>
           </>
         )}
 
-        <div>
-          <Label htmlFor="location">Location</Label>
-          <Input
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Lisbon, Portugal"
-          />
-        </div>
+        <LocationSelect country={country} city={city} onCountryChange={setCountry} onCityChange={setCity} required={role === "business"} />
 
         <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-          />
+          <Label htmlFor="email">{t.auth.email}</Label>
+          <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min. 10 characters"
-            />
+            <Label htmlFor="password">{t.auth.password}</Label>
+            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.auth.passwordMin} />
           </div>
           <div>
-            <Label htmlFor="passwordConfirm">Confirm</Label>
-            <Input
-              id="passwordConfirm"
-              type="password"
-              required
-              value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
-              placeholder="Repeat password"
-            />
+            <Label htmlFor="passwordConfirm">{t.auth.passwordConfirm}</Label>
+            <Input id="passwordConfirm" type="password" required value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} placeholder={t.auth.passwordRepeat} />
           </div>
         </div>
 
@@ -289,15 +213,9 @@ export default function RegisterPage() {
 
         <Button type="submit" disabled={busy}>
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-          {busy
-            ? "Creating account…"
-            : role === "business"
-              ? "Create business account"
-              : "Create investor account"}
+          {busy ? (role === "business" ? t.auth.creatingBusiness : t.auth.creatingInvestor) : (role === "business" ? t.auth.createBusinessBtn : t.auth.createInvestorBtn)}
         </Button>
-        <p className="text-center text-xs text-ink/40">
-          By continuing you agree to Brickfund&apos;s terms and privacy policy.
-        </p>
+        <p className="text-center text-xs text-ink/40">{t.auth.termsNotice}</p>
       </form>
     </AuthShell>
   );
@@ -321,9 +239,7 @@ function RoleButton({
       type="button"
       onClick={onClick}
       className={`flex flex-col items-center gap-1 rounded-xl px-3 py-3 text-center transition-all ${
-        active
-          ? "bg-white text-brand-800 shadow-soft ring-1 ring-brand-500/20"
-          : "text-ink/55 hover:text-brand-700"
+        active ? "bg-white text-brand-800 shadow-soft ring-1 ring-brand-500/20" : "text-ink/55 hover:text-brand-700"
       }`}
     >
       {icon}

@@ -1,7 +1,10 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import Logo from "./Logo";
 import { Quote } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export default function AuthShell({
   title,
@@ -14,6 +17,7 @@ export default function AuthShell({
   children: ReactNode;
   footer?: ReactNode;
 }) {
+  const { t } = useI18n();
   return (
     <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl gap-0 px-0 lg:grid-cols-2 lg:gap-0">
       {/* Brand panel */}
@@ -33,16 +37,15 @@ export default function AuthShell({
         <div className="relative">
           <Quote className="mb-4 h-8 w-8 text-gold-400" />
           <p className="font-display text-2xl font-medium leading-snug text-white/90">
-            “We funded our terrace expansion in three weeks. Brickfund connected
-            us with investors who actually understand hospitality.”
+            &ldquo;{t.auth.quote}&rdquo;
           </p>
           <div className="mt-6 flex items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-full bg-gold-400 font-display text-sm font-bold text-brand-900">
               MS
             </div>
             <div className="text-sm">
-              <p className="font-semibold">Maria Silva</p>
-              <p className="text-white/60">Founder, Bella Vista Trattoria</p>
+              <p className="font-semibold">{t.auth.quoteAuthor}</p>
+              <p className="text-white/60">{t.auth.quoteRole}</p>
             </div>
           </div>
         </div>

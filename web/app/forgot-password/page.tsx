@@ -6,9 +6,11 @@ import { Loader2, MailCheck } from "lucide-react";
 import AuthShell from "@/components/AuthShell";
 import { Button, ErrorNote, Input, Label } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 
 export default function ForgotPasswordPage() {
   const { requestPasswordReset } = useAuth();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
@@ -22,7 +24,7 @@ export default function ForgotPasswordPage() {
       await requestPasswordReset(email.trim());
       setSent(true);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t.auth.createError);
     } finally {
       setBusy(false);
     }
@@ -30,16 +32,13 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthShell
-      title="Reset your password"
-      subtitle="Enter your email and we'll send you a link to reset your password."
+      title={t.auth.resetTitle}
+      subtitle={t.auth.resetSubtitle}
       footer={
         <>
-          Remembered it?{" "}
-          <Link
-            href="/login"
-            className="font-semibold text-brand-700 underline-offset-2 hover:underline"
-          >
-            Back to sign in
+          {t.auth.remembered}{" "}
+          <Link href="/login" className="font-semibold text-brand-700 underline-offset-2 hover:underline">
+            {t.auth.backToSignIn}
           </Link>
         </>
       }
@@ -47,32 +46,21 @@ export default function ForgotPasswordPage() {
       {sent ? (
         <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6 text-center">
           <MailCheck className="mx-auto mb-3 h-10 w-10 text-brand-600" />
-          <h2 className="font-display text-lg font-semibold text-brand-900">
-            Check your inbox
-          </h2>
+          <h2 className="font-display text-lg font-semibold text-brand-900">{t.auth.resetSent}</h2>
           <p className="mt-1 text-sm text-ink/60">
-            If an account exists for{" "}
-            <span className="font-medium text-brand-800">{email}</span>, you&apos;ll
-            receive a reset link shortly.
+            {t.auth.resetSentBody.replace("{email}", email)}
           </p>
         </div>
       ) : (
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
+            <Label htmlFor="email">{t.auth.email}</Label>
+            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
           </div>
           <ErrorNote>{error}</ErrorNote>
           <Button type="submit" disabled={busy}>
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-            {busy ? "Sending…" : "Send reset link"}
+            {busy ? t.auth.sending : t.auth.sendResetLink}
           </Button>
         </form>
       )}
