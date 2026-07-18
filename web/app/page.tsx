@@ -82,12 +82,12 @@ export default function HomePage() {
             {types.map((type) => {
               const meta = getInvestmentTypeMeta(type, t);
               return (
-                <div key={type} className="flex items-start gap-4 rounded-2xl border border-cream-200 bg-cream-50 p-5">
+                <div key={type} className="flex flex-col items-center rounded-2xl border border-cream-200 bg-cream-50 p-5 text-center">
                   <span className={`inline-flex items-center gap-1.5 rounded-full font-medium ring-1 ring-inset px-3 py-1.5 text-xs ${meta.pill}`}>
                     <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
                     {meta.label}
                   </span>
-                  <p className="text-sm leading-relaxed text-ink/60">{meta.blurb}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-ink/60">{meta.blurb}</p>
                 </div>
               );
             })}
