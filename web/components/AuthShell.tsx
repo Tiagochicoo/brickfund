@@ -1,8 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
-import Logo from "./Logo";
 import { Quote } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
@@ -32,9 +30,6 @@ export default function AuthShell({
           aria-hidden="true"
         />
         <div className="relative">
-          <Logo light />
-        </div>
-        <div className="relative">
           <Quote className="mb-4 h-8 w-8 text-gold-400" />
           <p className="font-display text-2xl font-medium leading-snug text-white/90">
             &ldquo;{t.auth.quote}&rdquo;
@@ -57,11 +52,6 @@ export default function AuthShell({
       {/* Form panel */}
       <section className="flex items-center justify-center px-4 py-12 sm:px-8">
         <div className="w-full max-w-md">
-          <div className="mb-8 lg:hidden">
-            <Link href="/" aria-label="Brickfund home">
-              <Logo asLink={false} />
-            </Link>
-          </div>
           <h1 className="font-display text-3xl font-semibold tracking-tight text-brand-900">
             {title}
           </h1>
