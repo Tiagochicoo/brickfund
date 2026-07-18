@@ -1,5 +1,8 @@
 # Brickfund
 
+> **Branch:** `dev` — local development. URLs default to `http://127.0.0.1:8090` (PocketBase) and `http://localhost:3000` (app).
+> The `master` branch carries production URLs (`api.brick-fund.com`, `www.brick-fund.com`).
+
 A premium SaaS marketplace connecting brick-and-mortar businesses with investors.
 
 Businesses list funding opportunities (a restaurant expanding its terrace, a barbershop relocating, a gym raising seed capital). Each listing carries an **investment-type pill** — Seed, Growth, Loan, Equity, Revenue Share, or Convertible Note. Investors browse, filter, and connect.
