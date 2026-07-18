@@ -50,7 +50,7 @@ export default function AuthShell({
           </div>
         </div>
         <p className="relative text-xs text-white/40">
-          © {new Date().getFullYear()} Brickfund
+          © 2026 Brickfund
         </p>
       </aside>
 
@@ -58,8 +58,8 @@ export default function AuthShell({
       <section className="flex items-center justify-center px-4 py-12 sm:px-8">
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
-            <Link href="/">
-              <Logo />
+            <Link href="/" aria-label="Brickfund home">
+              <Logo asLink={false} />
             </Link>
           </div>
           <h1 className="font-display text-3xl font-semibold tracking-tight text-brand-900">
