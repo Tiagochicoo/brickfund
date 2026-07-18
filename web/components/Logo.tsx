@@ -3,17 +3,15 @@ import Link from "next/link";
 export default function Logo({
   className = "",
   light = false,
+  asLink = true,
 }: {
   className?: string;
   light?: boolean;
+  asLink?: boolean;
 }) {
   const text = light ? "text-white" : "text-brand-900";
-  return (
-    <Link
-      href="/"
-      className={`group inline-flex items-center gap-2 ${className}`}
-      aria-label="Brickfund home"
-    >
+  const logoContent = (
+    <>
       <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 shadow-soft ring-1 ring-brand-900/10">
         <svg
           viewBox="0 0 24 24"
@@ -33,6 +31,20 @@ export default function Logo({
       <span className={`font-display text-xl font-semibold tracking-tight ${text}`}>
         Brick<span className="text-gold-500">fund</span>
       </span>
+    </>
+  );
+
+  if (!asLink) {
+    return <div className={`group inline-flex items-center gap-2 ${className}`}>{logoContent}</div>;
+  }
+
+  return (
+    <Link
+      href="/"
+      className={`group inline-flex items-center gap-2 ${className}`}
+      aria-label="Brickfund home"
+    >
+      {logoContent}
     </Link>
   );
 }

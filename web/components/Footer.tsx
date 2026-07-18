@@ -57,7 +57,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-cream-200">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-ink/45 sm:flex-row sm:px-6">
-          <p>© {new Date().getFullYear()} Brickfund. {t.footer.rights}</p>
+          <p>© 2026 Brickfund. {t.footer.rights}</p>
           <p>{t.footer.crafted}</p>
         </div>
       </div>
