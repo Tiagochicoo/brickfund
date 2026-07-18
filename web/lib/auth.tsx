@@ -39,13 +39,17 @@ interface AuthState {
 const AuthContext = createContext<AuthState | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const pb = getPb();
-  const [user, setUser] = useState<User | null>(
-    (pb.authStore.model as unknown as User) ?? null
-  );
+  const [user, setUser] = useState<User | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
-  // Set up PocketBase auth change listener
+  // Initialize user state once on mount
   useEffect(() => {
+    const pb = getPb();
+    const initialUser = (pb.authStore.model as unknown as User) ?? null;
+    setUser(initialUser);
+    setInitialized(true);
+
+    // Set up PocketBase auth change listener
     const unsubscribe = pb.authStore.onChange(() => {
       const newUser = (pb.authStore.model as unknown as User) ?? null;
       setUser(newUser);
@@ -56,33 +60,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string) => {
+      const pb = getPb();
       await pb.collection("users").authWithPassword(email, password);
     },
-    [pb]
+    []
   );
 
   const register = useCallback(
     async (input: RegisterInput) => {
+      const pb = getPb();
       await pb.collection("users").create(input);
       await pb.collection("users").authWithPassword(input.email, input.password);
     },
-    [pb]
+    []
   );
 
   const logout = useCallback(() => {
+    const pb = getPb();
     pb.authStore.clear();
-  }, [pb]);
+  }, []);
 
   const requestPasswordReset = useCallback(
     async (email: string) => {
+      const pb = getPb();
       await pb.collection("users").requestPasswordReset(email);
     },
-    [pb]
+    []
   );
 
   const value = useMemo(
-    () => ({ user, loading: false, login, register, logout, requestPasswordReset }),
-    [user, login, register, logout, requestPasswordReset]
+    () => ({ user, loading: !initialized, login, register, logout, requestPasswordReset }),
+    [user, initialized, login, register, logout, requestPasswordReset]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
