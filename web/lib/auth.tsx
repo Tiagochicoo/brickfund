@@ -4,8 +4,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
-  useSyncExternalStore,
+  useState,
   type ReactNode,
 } from "react";
 import { getPb } from "./pb";
@@ -37,18 +38,21 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-function useAuthStore(): User | null {
-  const pb = getPb();
-  return useSyncExternalStore(
-    (onChange) => pb.authStore.onChange(onChange),
-    () => (pb.authStore.model as unknown as User) ?? null,
-    () => null
-  );
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const pb = getPb();
-  const user = useAuthStore();
+  const [user, setUser] = useState<User | null>(
+    (pb.authStore.model as unknown as User) ?? null
+  );
+
+  // Set up PocketBase auth change listener
+  useEffect(() => {
+    const unsubscribe = pb.authStore.onChange(() => {
+      const newUser = (pb.authStore.model as unknown as User) ?? null;
+      setUser(newUser);
+    });
+
+    return unsubscribe;
+  }, [pb.authStore]);
 
   const login = useCallback(
     async (email: string, password: string) => {
