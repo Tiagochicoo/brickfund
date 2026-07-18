@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   title: "Brickfund — Invest in local businesses",
   description:
     "Brickfund connects brick-and-mortar businesses with investors. Fund a restaurant expansion, a barbershop relocation, or a new gym.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
