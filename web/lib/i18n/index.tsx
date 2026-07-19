@@ -17,11 +17,12 @@ import { fr } from "./fr";
 import { zh } from "./zh";
 import { hi } from "./hi";
 import { ar } from "./ar";
-import { bn } from "./bn";
 import { ru } from "./ru";
-import { ur } from "./ur";
+import { de } from "./de";
+import { sv } from "./sv";
+import { fi } from "./fi";
 
-const DICTS: Record<Locale, TranslationDict> = { en, pt, es, fr, zh, hi, ar, bn, ru, ur };
+const DICTS: Record<Locale, TranslationDict> = { en, pt, es, fr, zh, hi, ar, ru, de, sv, fi };
 const STORAGE_KEY = "brickfund-locale";
 const EVENT_NAME = "brickfund-locale-change";
 
