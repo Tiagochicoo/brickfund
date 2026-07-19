@@ -1,4 +1,4 @@
-export type Locale = "en" | "zh" | "hi" | "es" | "fr" | "ar" | "bn" | "ru" | "pt" | "ur";
+export type Locale = "en" | "zh" | "hi" | "es" | "fr" | "ar" | "ru" | "pt" | "de" | "sv" | "fi";
 
 export const LOCALES: { code: Locale; label: string; native: string; flag: string; rtl: boolean }[] = [
   { code: "en", label: "English", native: "English", flag: "🇬🇧", rtl: false },
@@ -7,13 +7,14 @@ export const LOCALES: { code: Locale; label: string; native: string; flag: strin
   { code: "es", label: "Spanish", native: "Español", flag: "🇪🇸", rtl: false },
   { code: "fr", label: "French", native: "Français", flag: "🇫🇷", rtl: false },
   { code: "ar", label: "Arabic", native: "العربية", flag: "🇸🇦", rtl: true },
-  { code: "bn", label: "Bengali", native: "বাংলা", flag: "🇧🇩", rtl: false },
   { code: "ru", label: "Russian", native: "Русский", flag: "🇷🇺", rtl: false },
   { code: "pt", label: "Portuguese", native: "Português", flag: "🇵🇹", rtl: false },
-  { code: "ur", label: "Urdu", native: "اردو", flag: "🇵🇰", rtl: true },
+  { code: "de", label: "German", native: "Deutsch", flag: "🇩🇪", rtl: false },
+  { code: "sv", label: "Swedish", native: "Svenska", flag: "🇸🇪", rtl: false },
+  { code: "fi", label: "Finnish", native: "Suomi", flag: "🇫🇮", rtl: false },
 ];
 
-export const RTL_LOCALES: Locale[] = ["ar", "ur"];
+export const RTL_LOCALES: Locale[] = ["ar"];
 
 export function isRTL(locale: Locale): boolean {
   return RTL_LOCALES.includes(locale);
