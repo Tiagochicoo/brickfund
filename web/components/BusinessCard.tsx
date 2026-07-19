@@ -34,7 +34,7 @@ export default function BusinessCard({ business }: { business: Business }) {
   return (
     <Link
       href={`/businesses/${business.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-card dark:border-brand-700/30 dark:bg-brand-900/50 dark:shadow-soft dark:hover:shadow-card"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-card"
     >
       <div className="relative flex h-32 items-center justify-center">
         <Image
@@ -50,7 +50,7 @@ export default function BusinessCard({ business }: { business: Business }) {
           <InvestmentPill type={business.investmentType} size="sm" />
         </div>
         {funded && (
-          <span className="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-brand-700 ring-1 ring-white/60 dark:bg-brand-800/90 dark:text-gold-300 dark:ring-brand-700/30">
+          <span className="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-brand-700 ring-1 ring-white/60">
             {t.businessDetail.fundedBadge}
           </span>
         )}
@@ -58,37 +58,37 @@ export default function BusinessCard({ business }: { business: Business }) {
 
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="font-display text-lg font-semibold leading-snug text-brand-900 transition-colors group-hover:text-brand-600 dark:text-gold-100 dark:group-hover:text-gold-200">
+          <h3 className="font-display text-lg font-semibold leading-snug text-brand-900 transition-colors group-hover:text-brand-600">
             {business.name}
           </h3>
-          <p className="mt-0.5 flex items-center gap-1 text-xs text-ink/55 dark:text-gray-400">
+          <p className="mt-0.5 flex items-center gap-1 text-xs text-ink/55">
             <MapPin className="h-3.5 w-3.5" />
             {business.city ? `${business.city}${business.country ? ", " + business.country : ""}` : business.location}
-            <span className="mx-1 text-ink/30 dark:text-gray-600">•</span>
+            <span className="mx-1 text-ink/30">•</span>
             {catLabel}
           </p>
         </div>
 
-        <p className="line-clamp-2 text-sm leading-relaxed text-ink/70 dark:text-gray-300">
+        <p className="line-clamp-2 text-sm leading-relaxed text-ink/70">
           {business.pitch}
         </p>
 
         <div className="mt-auto">
           <div className="mb-1.5 flex items-center justify-between text-xs">
-            <span className="font-semibold text-brand-800 dark:text-gold-200">
+            <span className="font-semibold text-brand-800">
               {formatCurrency(business.fundingRaised)}
             </span>
-            <span className="text-ink/50 dark:text-gray-500">
+            <span className="text-ink/50">
               {t.misc.of} {formatCurrency(business.fundingGoal)}
             </span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-cream-200 dark:bg-brand-700/30">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-cream-200">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700 transition-all dark:from-gold-500 dark:to-gold-400"
+              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700 transition-all"
               style={{ width: `${percent}%` }}
             />
           </div>
-          <p className="mt-1.5 text-[11px] font-medium text-ink/45 dark:text-gray-500">
+          <p className="mt-1.5 text-[11px] font-medium text-ink/45">
             {percent}% {t.misc.raised}
           </p>
         </div>
