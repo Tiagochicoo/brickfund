@@ -72,29 +72,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-cream-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <div className="text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-brand-950">{t.home.typesTitle}</h2>
-            <p className="mx-auto mt-3 max-w-xl text-ink/60">{t.home.typesSubtitle}</p>
-          </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {types.map((type) => {
-              const meta = getInvestmentTypeMeta(type, t);
-              return (
-                <div key={type} className="flex flex-col items-center rounded-2xl border border-cream-200 bg-cream-50 p-5 text-center">
-                  <span className={`inline-flex items-center gap-1.5 rounded-full font-medium ring-1 ring-inset px-3 py-1.5 text-xs ${meta.pill}`}>
-                    <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
-                    {meta.label}
-                  </span>
-                  <p className="mt-3 text-sm leading-relaxed text-ink/60">{meta.blurb}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       <section id="how-it-works" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-gold-600">{t.home.howStep}</p>
@@ -123,6 +100,29 @@ export default function HomePage() {
             <Perk icon={<LineChart className="h-5 w-5" />} title={t.home.perkReturns} body={t.home.perkReturnsBody} />
             <Perk icon={<Sprout className="h-5 w-5" />} title={t.home.perkImpact} body={t.home.perkImpactBody} />
             <Perk icon={<TrendingUp className="h-5 w-5" />} title={t.home.perkFlexible} body={t.home.perkFlexibleBody} />
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-cream-200 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <div className="text-center">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-brand-950">{t.home.typesTitle}</h2>
+            <p className="mx-auto mt-3 max-w-xl text-ink/60">{t.home.typesSubtitle}</p>
+          </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {types.map((type) => {
+              const meta = getInvestmentTypeMeta(type, t);
+              return (
+                <div key={type} className="flex flex-col items-center rounded-2xl border border-cream-200 bg-cream-50 p-5 text-center">
+                  <span className={`inline-flex items-center gap-1.5 rounded-full font-medium ring-1 ring-inset px-3 py-1.5 text-xs ${meta.pill}`}>
+                    <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+                    {meta.label}
+                  </span>
+                  <p className="mt-3 text-sm leading-relaxed text-ink/60">{meta.blurb}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
