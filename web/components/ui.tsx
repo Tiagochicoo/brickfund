@@ -31,7 +31,6 @@ export function Input({
 }: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
-      suppressHydrationWarning
       className={`w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm text-ink shadow-sm outline-none transition-all placeholder:text-ink/35 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 ${className}`}
       {...props}
     />
