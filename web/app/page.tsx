@@ -48,11 +48,12 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
-            <Stat value="€4.2M" label={t.home.statRaised} />
-            <Stat value="120+" label={t.home.statBusinesses} />
-            <Stat value="800+" label={t.home.statInvestors} />
-            <Stat value="63%" label={t.home.statFillRate} />
+            <Stat value={t.home.statRaisedValue} label={t.home.statRaised} />
+            <Stat value={t.home.statBusinessesValue} label={t.home.statBusinesses} />
+            <Stat value={t.home.statInvestorsValue} label={t.home.statInvestors} />
+            <Stat value={t.home.statFillRateValue} label={t.home.statFillRate} />
           </div>
+          <p className="mx-auto mt-4 max-w-xl text-center text-xs text-ink/45">{t.home.statsNote}</p>
         </div>
       </section>
 

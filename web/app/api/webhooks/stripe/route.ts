@@ -78,6 +78,16 @@ async function handleEvent(pb: Awaited<ReturnType<typeof adminPb>>, event: Strip
         message: `Escrow funded (${pi.amount / 100} ${pi.currency.toUpperCase()}) — funds held on platform balance`,
         metadata: { paymentIntentId: pi.id },
       });
+      // Increment marketplace progress (priceCents → major units)
+      try {
+        const deal = await pb.collection("deals").getOne<DealRow>(dealId);
+        const biz = await pb.collection("businesses").getOne<{ id: string; fundingRaised: number; fundingGoal: number }>(deal.business);
+        const add = deal.priceCents / 100;
+        const next = Math.min((biz.fundingRaised || 0) + add, biz.fundingGoal || Number.MAX_SAFE_INTEGER);
+        await pb.collection("businesses").update(biz.id, { fundingRaised: next });
+      } catch (e) {
+        console.error("[stripe webhook] fundingRaised update failed", e);
+      }
       break;
     }
 

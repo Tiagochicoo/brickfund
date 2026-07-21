@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, FileText, Loader2, ShieldCheck, TrendingUp } from "lucide-react";
 import { apiFetch } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 import { formatCurrency } from "@/lib/constants";
 import { DEAL_STATE_LABELS } from "@/lib/deal-labels";
 import type { DealRow } from "@/lib/server/types";
@@ -14,6 +15,7 @@ import { DealActionsClient } from "@/components/deals/DealActionsClient";
 
 function DealsPageInner() {
   const { user, loading } = useAuth();
+  const { t } = useI18n();
   const router = useRouter();
   const sp = useSearchParams();
   const created = sp.get("created");
@@ -31,11 +33,11 @@ function DealsPageInner() {
       try {
         const res = await apiFetch("/api/deals");
         const data = (await res.json()) as { deals?: DealRow[]; error?: string };
-        if (!res.ok) throw new Error(data.error ?? "Failed to load deals");
+        if (!res.ok) throw new Error(data.error ?? t.deals.loadError);
         if (!cancelled) setDeals(data.deals ?? []);
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : "Failed to load deals");
+          setError(e instanceof Error ? e.message : t.deals.loadError);
           setDeals([]);
         }
       }
@@ -61,13 +63,13 @@ function DealsPageInner() {
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 ring-1 ring-brand-200">
             <ShieldCheck className="h-3.5 w-3.5" />
-            Escrow-protected deals
+            {t.deals.pageBadge}
           </span>
           <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-brand-950">
-            Your deals
+            {t.deals.pageTitle}
           </h1>
           <p className="mt-1 text-ink/60">
-            LOI → APA → escrow → handover. Funds held by Stripe until both parties confirm.
+            {t.deals.pageSubtitle}
           </p>
         </div>
         <Link
@@ -75,13 +77,13 @@ function DealsPageInner() {
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-700 px-5 py-3 text-sm font-semibold text-white shadow-soft transition-all hover:bg-brand-800"
         >
           <TrendingUp className="h-4 w-4" />
-          Find an opportunity
+          {t.deals.findOpportunity}
         </Link>
       </div>
 
       {created && (
         <div className="mt-6 rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-800">
-          Deal created. Send the Letter of Intent to get started.
+          {t.deals.dealCreated}
         </div>
       )}
 
@@ -100,15 +102,15 @@ function DealsPageInner() {
           <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-600">
             <FileText className="h-6 w-6" />
           </div>
-          <p className="mt-3 font-display text-lg font-semibold text-brand-900">No active deals</p>
+          <p className="mt-3 font-display text-lg font-semibold text-brand-900">{t.deals.emptyTitle}</p>
           <p className="mt-1 text-sm text-ink/55">
-            Browse businesses and start a deal to begin the escrow flow.
+            {t.deals.emptyBody}
           </p>
           <Link
             href="/businesses"
             className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white"
           >
-            Browse businesses
+            {t.deals.browseBusinesses}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -128,8 +130,8 @@ function DealsPageInner() {
                     <div className="font-display text-lg font-semibold text-brand-900">{d.name}</div>
                     <div className="mt-1 text-sm text-ink/55">
                       {formatCurrency(d.priceCents / 100)} {(d.currency || "eur").toUpperCase()} ·
-                      You are the <b>{role}</b>
-                      {counterparty && <> · with {counterparty.name}</>}
+                      {t.deals.youAreThe} <b>{role}</b>
+                      {counterparty && <> · {t.deals.with} {counterparty.name}</>}
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">

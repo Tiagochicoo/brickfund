@@ -44,7 +44,9 @@ brickfund/
 │       ├── 1739800001_set_business_rules.js
 │       ├── 1739800002_seed_data.js
 │       ├── 1739800003_add_city_country.js
-│       └── 1739800004_create_deal_collections.js   # deals, deal_events, webhook_events, stripe_accounts
+│       ├── 1739800003_add_city_country.js
+│       ├── 1739800004_create_deal_collections.js   # deals, deal_events, webhook_events, stripe_accounts
+│       └── 1739800005_tighten_rules.js
 ├── web/
 │   ├── app/
 │   │   ├── businesses/            # public marketplace
@@ -76,7 +78,7 @@ cd backend
 ./setup.sh
 ```
 
-PocketBase at http://127.0.0.1:8090. Admin UI: `/_/`. Superuser: `admin@brickfund.local` / `brickfund1234`.
+PocketBase at http://127.0.0.1:8090. Admin UI: `/_/`. Superuser: set via `PB_ADMIN_EMAIL` / `PB_ADMIN_PASSWORD` (local default in setup.sh is **dev-only** — change before any public deploy).
 
 ### 2. Documenso + Postgres
 
@@ -104,7 +106,7 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 # Copy whsec_... into STRIPE_WEBHOOK_SECRET
 ```
 
-## 🧑 Demo Accounts
+## 🧑 Demo Accounts (local / staging only — disable in production)
 
 | Role     | Email                       | Password         |
 | -------- | --------------------------- | ---------------- |

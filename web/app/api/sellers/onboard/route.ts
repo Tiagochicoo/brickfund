@@ -8,6 +8,40 @@ import type { StripeAccountRow } from "@/lib/server/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/** Map free-text country names / codes to ISO-2 for Stripe Express. Default PT (primary market). */
+function resolveStripeCountry(raw?: string | null): string {
+  const v = (raw || "").trim().toLowerCase();
+  const map: Record<string, string> = {
+    pt: "PT",
+    portugal: "PT",
+    es: "ES",
+    spain: "ES",
+    españa: "ES",
+    espana: "ES",
+    fr: "FR",
+    france: "FR",
+    de: "DE",
+    germany: "DE",
+    deutschland: "DE",
+    us: "US",
+    usa: "US",
+    "united states": "US",
+    gb: "GB",
+    uk: "GB",
+    "united kingdom": "GB",
+    ie: "IE",
+    ireland: "IE",
+    nl: "NL",
+    netherlands: "NL",
+    it: "IT",
+    italy: "IT",
+    be: "BE",
+    belgium: "BE",
+  };
+  if (v.length === 2) return v.toUpperCase();
+  return map[v] || "PT";
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const user = await getCurrentUser(req);
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -28,7 +62,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!stripeAccountId) {
     const created = await stripe.accounts.create({
       type: "express",
-      country: "US",
+      country: resolveStripeCountry(user.country),
       email: user.email,
       capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
       metadata: { user_id: user.id, name: user.name },

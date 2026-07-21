@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+      - name: Unit smoke (deal transitions)
+        run: npx --yes tsx ../scripts/smoke-deal-transitions.ts
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_PB_URL: http://127.0.0.1:8090
+          NEXT_PUBLIC_APP_URL: http://localhost:3000

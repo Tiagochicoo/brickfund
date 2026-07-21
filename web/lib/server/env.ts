@@ -7,9 +7,11 @@ function ensure(key: string, value: string): string {
   return value;
 }
 
+const isProd = process.env.NODE_ENV === "production";
+
 const _appUrl = read("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
 const _sessionSecret = read("SESSION_SECRET", "dev-only-secret-change-me-32-chars-min");
-const _pbUrl = read("NEXT_PUBLIC_PB_URL", "http://127.0.0.1:8090");
+const _pbUrl = read("NEXT_PUBLIC_PB_URL", read("PB_URL", "http://127.0.0.1:8090"));
 const _pbAdminEmail = read("PB_ADMIN_EMAIL");
 const _pbAdminPassword = read("PB_ADMIN_PASSWORD");
 const _stripeSecretKey = read("STRIPE_SECRET_KEY");
@@ -21,13 +23,36 @@ const _documensoWebhookSecret = read("DOCUMENSO_WEBHOOK_SECRET");
 const _documensoLoiTemplateId = read("DOCUMENSO_LOI_TEMPLATE_ID");
 const _documensoApaTemplateId = read("DOCUMENSO_APA_TEMPLATE_ID");
 
+/** Soft warn once at module load when prod is missing critical deal-path env. */
+function warnProdGaps() {
+  if (!isProd) return;
+  const missing: string[] = [];
+  if (!_pbAdminEmail) missing.push("PB_ADMIN_EMAIL");
+  if (!_pbAdminPassword) missing.push("PB_ADMIN_PASSWORD");
+  if (!_stripeSecretKey) missing.push("STRIPE_SECRET_KEY");
+  if (!_stripeWebhookSecret) missing.push("STRIPE_WEBHOOK_SECRET");
+  if (!_stripePublishableKey) missing.push("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY");
+  if (!_appUrl || _appUrl.includes("localhost")) missing.push("NEXT_PUBLIC_APP_URL");
+  if (missing.length) {
+    console.warn(`[brickfund] production env incomplete: ${missing.join(", ")} — deal/money routes may fail`);
+  }
+}
+warnProdGaps();
+
 export const serverEnv = {
   get appUrl() { return _appUrl; },
   sessionSecret: _sessionSecret,
+  isProd,
   pb: {
     get url() { return _pbUrl; },
-    get adminEmail() { return _pbAdminEmail; },
-    get adminPassword() { return _pbAdminPassword; },
+    get adminEmail() {
+      if (isProd) return ensure("PB_ADMIN_EMAIL", _pbAdminEmail);
+      return _pbAdminEmail;
+    },
+    get adminPassword() {
+      if (isProd) return ensure("PB_ADMIN_PASSWORD", _pbAdminPassword);
+      return _pbAdminPassword;
+    },
   },
   stripe: {
     get secretKey() { return ensure("STRIPE_SECRET_KEY", _stripeSecretKey); },
