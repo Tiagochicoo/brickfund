@@ -1,7 +1,7 @@
 export type TranslationDict = {
   meta: { title: string; description: string };
   nav: {
-    explore: string; howItWorks: string; forInvestors: string; signIn: string;
+    explore: string; deals: string; howItWorks: string; forInvestors: string; signIn: string;
     getStarted: string; dashboard: string; signOut: string; toggleMenu: string;
   };
   footer: {
@@ -107,6 +107,7 @@ export const en: TranslationDict = {
   },
   nav: {
     explore: "Explore",
+    deals: "Deals",
     howItWorks: "How it works",
     forInvestors: "For investors",
     signIn: "Sign in",

@@ -8,6 +8,7 @@ export const hi: TranslationDict = {
   },
   nav: {
     explore: "एक्सप्लोर करें",
+    deals: "Deals",
     howItWorks: "कैसे काम करता है",
     forInvestors: "निवेशकों के लिए",
     signIn: "साइन इन",

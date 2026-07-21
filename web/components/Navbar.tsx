@@ -15,7 +15,7 @@ export default function Navbar() {
 
   const LINKS = [
     { href: "/businesses", label: t.nav.explore },
-    ...(user ? [{ href: "/deals", label: "Deals" }] : []),
+    ...(user ? [{ href: "/deals", label: t.nav.deals }] : []),
     { href: "/#how-it-works", label: t.nav.howItWorks },
     { href: "/#for-investors", label: t.nav.forInvestors },
   ];

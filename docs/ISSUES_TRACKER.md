@@ -1,27 +1,22 @@
-# GitHub Issues — Project Review Tracker
+# GitHub Issues tracker
 
-All review issues **#9–#28** are **CLOSED** on master/dev as of `d1a805a`.
+## Closed (this review cycle + prior)
 
-| # | State | Title |
-|---|-------|-------|
-| #9–#14 | CLOSED | Auth + money-path P0s |
-| #15 | CLOSED | PB migrations deals/city |
-| #16 | CLOSED | Env matrix + fail-fast (fill real secrets on server) |
-| #17 | CLOSED | Listing create UI |
-| #18 | CLOSED | EUR + Stripe country |
-| #19 | CLOSED | fundingRaised on escrow |
-| #20–#21 | CLOSED | Investor role + Documenso secret |
-| #22 | CLOSED | Business owner create rule |
-| #23 | CLOSED | Early-access stats |
-| #24 | CLOSED | CI + smoke |
-| #25 | CLOSED | Legal pages |
-| #26 | CLOSED | Deals i18n |
-| #27 | CLOSED | Dispute runbook |
-| #28 | CLOSED | Credentials hygiene docs |
+| Range | Summary |
+|-------|---------|
+| #9–#28 | First full review (auth, money path, listings, docs, CI) |
+| #29 | Deal room SSR via `getCurrentUser` + admin PB |
+| #30 | Webhook retry when prior attempt failed |
+| #31 | Server prefers internal `PB_URL` |
+| #32 | Idempotent `fundingRaised` (`funding_counted` event) |
+| #33 | Navbar `t.nav.deals` |
+| #34 | Repo hygiene (gitignore, junk removed, `.env.example`) |
+| #35 | Documenso default port **3100** |
 
-## Still manual ops (not code issues)
-- Put real `PB_ADMIN_*`, Stripe publishable, Documenso tokens in production `.env.local`
-- Rotate default admin/demo passwords on public hosts
-- Counsel review of `/legal/*` before live capital
+## Still ops (not always coded)
 
-See PROJECT_REVIEW_2026_07_21.md and MARKETING_STRATEGY_FIRST_USERS.md.
+- Stripe publishable key in production env
+- Rotate demo/admin passwords on public hosts
+- Counsel review of `/legal/*`
+
+See [PROJECT_REVIEW.md](./PROJECT_REVIEW.md) and [README.md](./README.md).

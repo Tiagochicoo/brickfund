@@ -1,6 +1,6 @@
 services:
   # PocketBase already runs as a binary in backend/ (no container needed).
-  # See backend/setup.sh. It serves http://127.0.0.1:8090.
+  # PocketBase binary: typically :8093 in prod systemd, :8090 in setup.sh default.
 
   # Documenso Community Edition — self-hosted, free, unlimited signatures,
   # no per-document API fees, AGPL-3.0. We share Postgres with PocketBase:
@@ -34,7 +34,7 @@ services:
       NEXTAUTH_SECRET: ${DOCUMENSO_NEXTAUTH_SECRET:-dev-only-change-me-32-chars-min-aaaaa}
       NEXT_PRIVATE_ENCRYPTION_KEY: ${DOCUMENSO_ENC_KEY:-dev-only-encryption-key-32-chars-min}
       NEXT_PRIVATE_ENCRYPTION_SECONDARY_KEY: ${DOCUMENSO_ENC_KEY2:-dev-only-encryption-key2-32-chars-mi}
-      NEXT_PUBLIC_WEBAPP_URL: ${DOCUMENSO_PUBLIC_URL:-http://localhost:3001}
+      NEXT_PUBLIC_WEBAPP_URL: ${DOCUMENSO_PUBLIC_URL:-http://localhost:3100}
       NEXT_PRIVATE_INTERNAL_WEBAPP_URL: http://localhost:3000
       NEXT_PRIVATE_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/documenso
       NEXT_PRIVATE_DIRECT_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/documenso
@@ -47,7 +47,7 @@ services:
       NEXT_PRIVATE_SMTP_FROM_NAME: ${DOCUMENSO_SMTP_FROM_NAME:-Brickfund}
       NEXT_PRIVATE_SMTP_FROM_ADDRESS: ${DOCUMENSO_SMTP_FROM_ADDRESS:-noreply@brickfund.local}
       NEXT_PUBLIC_DISABLE_SIGNUP: "false"
-    ports: ["3001:3000"]
+    ports: ["3100:3000"]
 
 volumes:
   documenso-pg:

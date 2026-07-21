@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ArrowLeft, FileText, ShieldCheck, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
-import { getPb } from "@/lib/pb";
+import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
+import { ArrowLeft, FileText, ShieldCheck, CheckCircle2, AlertTriangle } from "lucide-react";
+import { adminPb } from "@/lib/server/pb-admin";
+import { getCurrentUser } from "@/lib/server/session";
 import type { DealEventRow, DealRow } from "@/lib/server/types";
 import { formatCurrency } from "@/lib/constants";
 import { formatDate } from "@/lib/format";
@@ -10,21 +12,21 @@ import { DealActions } from "@/components/deals/DealActions";
 import { DealTimeline } from "@/components/deals/DealTimeline";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
-async function loadDeal(dealId: string): Promise<{ deal: DealRow; events: DealEventRow[]; userId: string } | null> {
+async function loadDeal(
+  dealId: string,
+  req: Request
+): Promise<{ deal: DealRow; events: DealEventRow[]; userId: string } | null> {
+  const user = await getCurrentUser(req);
+  if (!user) return null;
+
+  const pb = await adminPb();
   try {
-    const pb = getPb();
-    // Server-side, we read cookies from the request via headers()
-    const cookieHeader = await readCookieHeader();
-    pb.authStore.loadFromCookie(cookieHeader ?? "");
-    if (!pb.authStore.isValid) return null;
-    const userId = (pb.authStore.model as { id?: string } | null)?.id;
-    if (!userId) return null;
-
     const deal = await pb.collection("deals").getOne<DealRow>(dealId, {
       expand: "business,buyer,seller",
     });
-    if (deal.buyer !== userId && deal.seller !== userId) return null;
+    if (deal.buyer !== user.id && deal.seller !== user.id) return null;
 
     const events = await pb.collection("deal_events").getFullList<DealEventRow>({
       filter: `deal = "${dealId}"`,
@@ -32,17 +34,10 @@ async function loadDeal(dealId: string): Promise<{ deal: DealRow; events: DealEv
       expand: "actor",
     });
 
-    return { deal, events, userId };
+    return { deal, events, userId: user.id };
   } catch {
     return null;
   }
-}
-
-// headers() is async in Next.js 16.
-async function readCookieHeader(): Promise<string | null> {
-  const { headers } = await import("next/headers");
-  const h = await headers();
-  return h.get("cookie");
 }
 
 export default async function DealRoom({
@@ -51,8 +46,22 @@ export default async function DealRoom({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await loadDeal(id);
-  if (!data) notFound();
+  const h = await headers();
+  // Reconstruct a Request-like object for getCurrentUser
+  const req = new Request("http://local/deal", {
+    headers: {
+      cookie: h.get("cookie") ?? "",
+      authorization: h.get("authorization") ?? "",
+    },
+  });
+
+  const data = await loadDeal(id, req);
+  if (!data) {
+    // Unauthenticated → login; authenticated but not a party → 404
+    const user = await getCurrentUser(req);
+    if (!user) redirect(`/login?next=/deals/${id}`);
+    notFound();
+  }
 
   const { deal, events, userId } = data;
   const role = deal.buyer === userId ? "buyer" : "seller";
@@ -74,7 +83,9 @@ export default async function DealRoom({
         <div>
           <div className="flex items-center gap-2 text-sm text-ink/55">
             <FileText className="h-4 w-4" />
-            <span>You are the <b>{role}</b></span>
+            <span>
+              You are the <b>{role}</b>
+            </span>
             {counterparty && <span>· with {counterparty.name}</span>}
           </div>
           <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-brand-950 sm:text-4xl">
@@ -123,8 +134,11 @@ export default async function DealRoom({
             </p>
             <dl className="mt-4 space-y-2 border-t border-cream-200 pt-4 text-sm">
               <Row label="Platform fee" value={formatCurrency(deal.platformFeeCents / 100)} />
-              <Row label="You pay (as buyer)" value={formatCurrency((deal.priceCents + deal.platformFeeCents) / 100)} />
-              <Row label="Currency" value={deal.currency.toUpperCase()} />
+              <Row
+                label="You pay (as buyer)"
+                value={formatCurrency((deal.priceCents + deal.platformFeeCents) / 100)}
+              />
+              <Row label="Currency" value={(deal.currency || "eur").toUpperCase()} />
               <Row label="Created" value={formatDate(deal.created)} />
               {deal.fundsHeldAt && <Row label="Escrow funded" value={formatDate(deal.fundsHeldAt)} />}
               {deal.transferId && (
@@ -148,7 +162,7 @@ export default async function DealRoom({
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 text-brand-600" />
-                Legally binding LOI + APA signed via Documenso (ESIGN / eIDAS compliant).
+                Legally binding LOI + APA signed via Documenso when configured.
               </li>
               <li className="flex items-start gap-2">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 text-gold-600" />

@@ -8,6 +8,7 @@ export const ru: TranslationDict = {
   },
   nav: {
     explore: "Обзор",
+    deals: "Deals",
     howItWorks: "Как это работает",
     forInvestors: "Инвесторам",
     signIn: "Войти",

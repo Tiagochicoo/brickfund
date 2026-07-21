@@ -8,6 +8,7 @@ export const fi: TranslationDict = {
   },
   nav: {
     explore: "Selaa",
+    deals: "Deals",
     howItWorks: "Miten se toimii",
     forInvestors: "Sijoittajille",
     signIn: "Kirjaudu sisään",
