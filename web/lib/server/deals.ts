@@ -3,6 +3,8 @@ import { adminPb } from "./pb-admin";
 import { stripe } from "./stripe";
 import type { DealEventRow, DealRow, DealState, WebhookEventRow } from "./types";
 
+import { DEAL_STATE_LABELS } from "../deal-labels";
+
 export const VALID_TRANSITIONS: Record<DealState, DealState[]> = {
   negotiating: ["loi_sent", "declined"],
   loi_sent: ["loi_signed", "declined"],
@@ -17,19 +19,7 @@ export const VALID_TRANSITIONS: Record<DealState, DealState[]> = {
   disputed: ["funds_held", "handover_confirmed", "refunded", "declined"],
 };
 
-export const DEAL_STATE_LABELS: Record<DealState, string> = {
-  negotiating: "Negotiating",
-  loi_sent: "LOI sent",
-  loi_signed: "LOI signed",
-  apa_sent: "APA sent",
-  apa_signed: "APA signed",
-  funds_held: "Funds in escrow",
-  handover_confirmed: "Handover confirmed",
-  completed: "Completed",
-  declined: "Declined",
-  refunded: "Refunded",
-  disputed: "Disputed",
-};
+export { DEAL_STATE_LABELS };
 
 export function canTransition(from: DealState, to: DealState): boolean {
   return VALID_TRANSITIONS[from].includes(to);
@@ -56,21 +46,35 @@ export async function transition(
 ): Promise<DealRow> {
   const allowed = Array.isArray(expectedFrom) ? expectedFrom : [expectedFrom];
 
-  // Fetch current state, then attempt conditional update.
+  // Double-read for lightweight optimistic concurrency (PB has no multi-doc txns).
   const current = await pb.collection("deals").getOne<DealRow>(dealId);
+  if (current.state === to) {
+    // Idempotent: already at target (e.g. duplicate webhook)
+    return current;
+  }
   if (!allowed.includes(current.state)) {
     throw new Error(`Invalid transition: deal ${dealId} is ${current.state}, expected ${allowed.join("|")}`);
   }
-  if (!canTransition(current.state, to) && current.state !== to) {
+  if (!canTransition(current.state, to)) {
     throw new Error(`Invalid transition ${current.state} → ${to}`);
   }
 
-  // Optimistic-concurrency update: include the expected state in the filter.
-  // If another process changed state first, this returns 0 rows and PB errors.
+  // Re-check immediately before write to shrink race window
+  const fresh = await pb.collection("deals").getOne<DealRow>(dealId);
+  if (fresh.state === to) return fresh;
+  if (fresh.state !== current.state) {
+    throw new Error(
+      `Concurrent modification: deal ${dealId} changed ${current.state} → ${fresh.state} before transition to ${to}`
+    );
+  }
+
   try {
     const updated = await pb.collection("deals").update<DealRow>(dealId, {
       state: to,
     });
+    if (updated.state !== to) {
+      throw new Error(`Transition to ${to} did not stick (got ${updated.state})`);
+    }
     await pb.collection("deal_events").create<DealEventRow>({
       deal: dealId,
       type: opts.type,

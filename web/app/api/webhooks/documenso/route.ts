@@ -9,9 +9,15 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  if (serverEnv.documenso.webhookSecret) {
+  const configured = serverEnv.documenso.webhookSecret;
+  const isProd = process.env.NODE_ENV === "production";
+  if (isProd && !configured) {
+    console.error("[documenso webhook] DOCUMENSO_WEBHOOK_SECRET missing in production");
+    return NextResponse.json({ error: "webhook not configured" }, { status: 503 });
+  }
+  if (configured) {
     const secret = req.headers.get("x-documenso-secret");
-    if (secret !== serverEnv.documenso.webhookSecret) {
+    if (secret !== configured) {
       return NextResponse.json({ error: "invalid secret" }, { status: 401 });
     }
   }
