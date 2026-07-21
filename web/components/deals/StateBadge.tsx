@@ -1,5 +1,5 @@
 import type { DealState } from "@/lib/server/types";
-import { DEAL_STATE_LABELS } from "@/lib/server/deals";
+import { DEAL_STATE_LABELS } from "@/lib/deal-labels";
 
 const COLORS: Record<DealState, string> = {
   negotiating: "bg-slate-100 text-slate-700 ring-slate-200",

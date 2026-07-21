@@ -1,42 +1,59 @@
+"use client";
+
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, FileText, ShieldCheck, TrendingUp } from "lucide-react";
-import { listBusinesses } from "@/lib/api";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowRight, FileText, Loader2, ShieldCheck, TrendingUp } from "lucide-react";
+import { apiFetch } from "@/lib/api-client";
+import { useAuth } from "@/lib/auth";
 import { formatCurrency } from "@/lib/constants";
-import { getPb } from "@/lib/pb";
+import { DEAL_STATE_LABELS } from "@/lib/deal-labels";
 import type { DealRow } from "@/lib/server/types";
-import { DEAL_STATE_LABELS } from "@/lib/server/deals";
 import { StateBadge } from "@/components/deals/StateBadge";
 import { DealActionsClient } from "@/components/deals/DealActionsClient";
 
-export const dynamic = "force-dynamic";
+function DealsPageInner() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const sp = useSearchParams();
+  const created = sp.get("created");
+  const [deals, setDeals] = useState<DealRow[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-async function getDeals(authCookie: string | null): Promise<DealRow[]> {
-  if (!authCookie) return [];
-  try {
-    const pb = getPb();
-    pb.authStore.loadFromCookie(authCookie);
-    if (!pb.authStore.isValid) return [];
-    const userId = (pb.authStore.model as { id?: string } | null)?.id;
-    if (!userId) return [];
-    const res = await pb.collection("deals").getList<DealRow>(1, 100, {
-      filter: `buyer = "${userId}" || seller = "${userId}"`,
-      sort: "-updated",
-      expand: "business,buyer,seller",
-    });
-    return res.items as DealRow[];
-  } catch {
-    return [];
+  useEffect(() => {
+    if (!loading && !user) router.replace("/login");
+  }, [loading, user, router]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await apiFetch("/api/deals");
+        const data = (await res.json()) as { deals?: DealRow[]; error?: string };
+        if (!res.ok) throw new Error(data.error ?? "Failed to load deals");
+        if (!cancelled) setDeals(data.deals ?? []);
+      } catch (e) {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : "Failed to load deals");
+          setDeals([]);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  if (loading || !user) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-brand-600" />
+      </div>
+    );
   }
-}
 
-export default async function DealsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ created?: string }>;
-}) {
-  const sp = await searchParams;
-  const cookieHeader = typeof document === "undefined" ? null : document.cookie;
-  const deals = await getDeals(cookieHeader);
+  const list = deals ?? [];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -62,13 +79,23 @@ export default async function DealsPage({
         </Link>
       </div>
 
-      {sp.created && (
+      {created && (
         <div className="mt-6 rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-800">
           Deal created. Send the Letter of Intent to get started.
         </div>
       )}
 
-      {deals.length === 0 ? (
+      {error && (
+        <div className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+          {error}
+        </div>
+      )}
+
+      {deals === null ? (
+        <div className="mt-8 flex items-center justify-center py-14">
+          <Loader2 className="h-6 w-6 animate-spin text-brand-600" />
+        </div>
+      ) : list.length === 0 ? (
         <div className="mt-8 rounded-2xl border border-dashed border-cream-200 bg-white py-14 text-center">
           <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-600">
             <FileText className="h-6 w-6" />
@@ -87,10 +114,9 @@ export default async function DealsPage({
         </div>
       ) : (
         <div className="mt-8 space-y-3">
-          {deals.map((d) => {
-            const role = (d.expand?.buyer?.id ?? d.buyer) ? "buyer" : "seller";
-            const counterparty =
-              role === "buyer" ? d.expand?.seller : d.expand?.buyer;
+          {list.map((d) => {
+            const role = d.buyer === user.id ? "buyer" : "seller";
+            const counterparty = role === "buyer" ? d.expand?.seller : d.expand?.buyer;
             return (
               <Link
                 key={d.id}
@@ -101,7 +127,7 @@ export default async function DealsPage({
                   <div className="min-w-0">
                     <div className="font-display text-lg font-semibold text-brand-900">{d.name}</div>
                     <div className="mt-1 text-sm text-ink/55">
-                      {formatCurrency(d.priceCents / 100)} USD ·
+                      {formatCurrency(d.priceCents / 100)} {(d.currency || "eur").toUpperCase()} ·
                       You are the <b>{role}</b>
                       {counterparty && <> · with {counterparty.name}</>}
                     </div>
@@ -119,5 +145,19 @@ export default async function DealsPage({
 
       <DealActionsClient />
     </div>
+  );
+}
+
+export default function DealsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[40vh] items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-brand-600" />
+        </div>
+      }
+    >
+      <DealsPageInner />
+    </Suspense>
   );
 }

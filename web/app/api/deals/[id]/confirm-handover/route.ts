@@ -15,7 +15,7 @@ export async function POST(
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const { id } = await ctx.params;
 
-  const body = (await req.json().catch(() => ({}))) as { role?: "buyer" | "seller" };
+  await req.json().catch(() => ({}));
 
   const pb = await adminPb();
   const deal = await pb.collection("deals").getOne<DealRow>(id);
@@ -29,7 +29,7 @@ export async function POST(
     return NextResponse.json({ error: `cannot confirm handover from ${deal.state}` }, { status: 400 });
   }
 
-  const role = body.role ?? (isBuyer ? "buyer" : "seller");
+  const role = isBuyer ? "buyer" : "seller";
   const now = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
 
   const updated = await pb.collection("deals").update<DealRow>(id, {
@@ -43,7 +43,7 @@ export async function POST(
   });
 
   if (updated.buyerConfirmedAt && updated.sellerConfirmedAt) {
-    await transition(pb, id, "funds_held" as DealState, "handover_confirmed", {
+    await transition(pb, id, ["funds_held", "handover_confirmed"] as DealState[], "handover_confirmed", {
       type: "handover_confirmed_both",
       message: "Both parties confirmed handover — releasing funds to seller",
     });

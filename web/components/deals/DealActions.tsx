@@ -5,6 +5,7 @@ import type { Stripe as StripeType } from "@stripe/stripe-js";
 import { loadStripe } from "@/lib/stripe-loader";
 import { FileText, PenLine, CreditCard, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import type { DealState } from "@/lib/server/types";
+import { apiFetch } from "@/lib/api-client";
 
 type Props = {
   deal: {
@@ -26,9 +27,8 @@ export function DealActions({ deal }: Props) {
   async function call(url: string, body?: unknown, method = "POST"): Promise<{ ok: boolean; data: Record<string, unknown> }> {
     setBusy(url);
     setError(null);
-    const res = await fetch(url, {
+    const res = await apiFetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
     const data = (await res.json()) as Record<string, unknown>;
@@ -49,7 +49,7 @@ export function DealActions({ deal }: Props) {
   async function loadSignUrl(doc: "loi" | "apa") {
     setBusy(`sign-${doc}`);
     setError(null);
-    const res = await fetch(`/api/deals/${deal.id}/signing-url/${doc}`);
+    const res = await apiFetch(`/api/deals/${deal.id}/signing-url/${doc}`);
     const data = (await res.json()) as { url?: string; error?: string };
     setBusy(null);
     if (res.ok && data.url) window.open(data.url, "_blank", "noopener,noreferrer");
@@ -66,7 +66,8 @@ export function DealActions({ deal }: Props) {
     }
   }
   async function actionConfirm() {
-    await call(`/api/deals/${deal.id}/confirm-handover`, { role: deal.role });
+    // Role is derived server-side from auth identity — do not send spoofable role.
+    await call(`/api/deals/${deal.id}/confirm-handover`, {});
     location.reload();
   }
   async function actionDispute() {
