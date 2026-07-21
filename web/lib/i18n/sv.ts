@@ -1,88 +1,4 @@
-export type TranslationDict = {
-  meta: { title: string; description: string };
-  nav: {
-    explore: string; howItWorks: string; forInvestors: string; signIn: string;
-    getStarted: string; dashboard: string; signOut: string; toggleMenu: string;
-  };
-  footer: {
-    tagline: string; platform: string; exploreBusinesses: string; raiseCapital: string;
-    becomeInvestor: string; company: string; howItWorks: string; signIn: string;
-    contact: string; rights: string; crafted: string;
-  };
-  home: {
-    badge: string; heroTitle: string; heroSubtitle: string; exploreOpportunities: string;
-    raiseCapital: string; statRaised: string; statBusinesses: string; statInvestors: string;
-    statFillRate: string; liveOpportunities: string; featuredTitle: string; viewAll: string;
-    typesTitle: string; typesSubtitle: string; howTitle: string; howStep: string;
-    step1Title: string; step1Body: string; step2Title: string; step2Body: string;
-    step3Title: string; step3Body: string; investorBadge: string; investorTitle: string;
-    investorBody: string; startInvesting: string; perkVetted: string; perkVettedBody: string;
-    perkReturns: string; perkReturnsBody: string; perkImpact: string; perkImpactBody: string;
-    perkFlexible: string; perkFlexibleBody: string; businessBadge: string; businessTitle: string;
-    businessBody: string; startRaising: string; perkSimple: string; perkSimpleBody: string;
-    perkDirect: string; perkDirectBody: string; perkControl: string; perkControlBody: string;
-    ctaTitle: string; ctaBody: string; ctaCreate: string; ctaBrowse: string;
-  };
-  businesses: {
-    title: string; subtitle: string; allCities: string; searchPlaceholder: string;
-    emptyTitle: string; emptyBody: string; clearFilters: string;
-  };
-  businessDetail: {
-    backToOpportunities: string; about: string; whatInvestorsGet: string;
-    whatInvestorsgetBody1: string; whatInvestorsgetBody2: string; whatInvestorsgetBody3: string;
-    raised: string; funded: string; goalOf: string; remaining: string; dealType: string;
-    expressInterest: string; expressInterestHint: string; listedBy: string; fundedBadge: string;
-  };
-  auth: {
-    welcomeBack: string; signInSubtitle: string; email: string; password: string;
-    forgotPassword: string; invalidCredentials: string; signingIn: string; signIn: string;
-    demoAccounts: string; demoBusiness: string; demoInvestor: string; demoPassword: string;
-    createAccount: string; registerSubtitle: string; haveAccount: string; noAccount: string;
-    createNow: string; roleBusiness: string; roleBusinessSub: string; roleInvestor: string;
-    roleInvestorSub: string; yourName: string; fullName: string; businessName: string;
-    phone: string; country: string; countryPlaceholder: string; city: string;
-    cityPlaceholder: string; cityManualPlaceholder: string; citySelectFirst: string;
-    loadingLocations: string; investorType: string; individualInvestor: string;
-    investmentFirm: string; fundFamilyOffice: string; firmName: string; firmNameOptional: string;
-    minBudget: string; maxBudget: string; accredited: string; location: string;
-    passwordMin: string; passwordConfirm: string; passwordRepeat: string;
-    passwordMismatch: string; passwordShort: string; createError: string;
-    creatingBusiness: string; creatingInvestor: string; createBusinessBtn: string;
-    createInvestorBtn: string; termsNotice: string; quote: string; quoteAuthor: string;
-    quoteRole: string; resetTitle: string; resetSubtitle: string; sendResetLink: string;
-    sending: string; resetSent: string; resetSentBody: string; remembered: string;
-    backToSignIn: string; signingOut: string;
-  };
-  dashboard: {
-    businessAccount: string; investorAccount: string; welcome: string;
-    businessSubtitle: string; investorSubtitle: string; newListing: string; newListingHint: string;
-    accountType: string; company: string; firm: string; location: string; listings: string;
-    published: string; budget: string; yourListings: string; recommended: string;
-    exploreAll: string; emptyBusinessTitle: string; emptyBusinessBody: string;
-    emptyInvestorTitle: string; emptyInvestorBody: string; exploreExamples: string;
-    browseOpportunities: string; publishedLabel: string; hiddenLabel: string;
-    visibleToInvestors: string; hiddenFromMarketplace: string; saving: string;
-    delete: string; deleteTitle: string; deleteWarning: string; deleteConfirmBtn: string;
-    deleting: string; cancel: string;
-  };
-  notFound: { title: string; body: string; backHome: string };
-  investmentTypes: {
-    seed: string; growth: string; loan: string; equity: string; revenue_share: string;
-    convertible_note: string; seedBlurb: string; growthBlurb: string; loanBlurb: string;
-    equityBlurb: string; revenue_shareBlurb: string; convertible_noteBlurb: string;
-  };
-  categories: {
-    restaurant: string; barber: string; gym: string; cafe: string; retail: string;
-    salon: string; bakery: string; bar: string; other: string;
-  };
-  misc: { of: string; raised: string; all: string };
-  deals: {
-    startInvestmentDeal: string; startDeal: string;
-    processDescription: string; investmentAmountLabel: string;
-    noteToBusinessLabel: string; noteToBusinessPlaceholder: string;
-    cancel: string; creating: string; createDeal: string;
-  };
-};
+import type { TranslationDict } from "./en";
 
 export const sv: TranslationDict = {
   meta: {
@@ -113,6 +29,10 @@ export const sv: TranslationDict = {
     contact: "Kontakt",
     rights: "Alla rättigheter förbehållna.",
     crafted: "Skapad för huvudgatan.",
+    legal: "Legal",
+    terms: "Terms",
+    privacy: "Privacy",
+    risk: "Risk disclosure",
   },
   home: {
     badge: "Huvudgatan möter riskkapital",
@@ -125,6 +45,11 @@ export const sv: TranslationDict = {
     statBusinesses: "Finansierade företag",
     statInvestors: "Aktiva investerare",
     statFillRate: "Genomsnittlig fyllnadsgrad",
+    statRaisedValue: "Beta",
+    statBusinessesValue: "6",
+    statInvestorsValue: "Open",
+    statFillRateValue: "PT · ES",
+    statsNote: "Illustrative early-access metrics — not audited traction.",
     liveOpportunities: "Live-möjligheter",
     featuredTitle: "Utvalda företag",
     viewAll: "Visa alla",
@@ -306,6 +231,34 @@ export const sv: TranslationDict = {
     deleting: "Tar bort…",
     cancel: "Avbryt",
   },
+  listing: {
+    badge: "New listing",
+    title: "Create a funding listing",
+    subtitle: "Tell investors what you're raising and why it matters.",
+    name: "Business name",
+    category: "Category",
+    investmentType: "Investment type",
+    pitch: "Short pitch",
+    pitchPlaceholder: "One sentence on what the capital funds…",
+    description: "Full description",
+    descriptionPlaceholder: "Story, numbers, use of funds…",
+    fundingGoal: "Funding goal (EUR)",
+    fundingGoalHint: "Major currency units, e.g. 50000 for €50,000",
+    publishNow: "Publish to marketplace",
+    publishHint: "Uncheck to save as hidden draft",
+    create: "Create listing",
+    creating: "Creating…",
+    validation: "Name, pitch, and a positive funding goal are required.",
+    createError: "Could not create listing. Check your connection and try again.",
+  },
+  legal: {
+    termsTitle: "Terms of use",
+    privacyTitle: "Privacy policy",
+    riskTitle: "Risk disclosure",
+    lastUpdated: "Last updated: July 2026",
+    counselNote: "This summary is not legal advice. Counsel review required before taking live capital.",
+  },
+
   notFound: {
     title: "Sidan hittades inte",
     body: "Sidan eller noteringen du letar efter finns inte.",
@@ -351,5 +304,16 @@ export const sv: TranslationDict = {
     cancel: "Avbryt",
     creating: "Skapar…",
     createDeal: "Skapa affär",
+    pageBadge: "Escrow-protected deals",
+    pageTitle: "Your deals",
+    pageSubtitle: "LOI → APA → escrow → handover. Funds held by Stripe until both parties confirm.",
+    findOpportunity: "Find an opportunity",
+    dealCreated: "Deal created. Send the Letter of Intent to get started.",
+    emptyTitle: "No active deals",
+    emptyBody: "Browse businesses and start a deal to begin the escrow flow.",
+    browseBusinesses: "Browse businesses",
+    youAreThe: "You are the",
+    with: "with",
+    loadError: "Failed to load deals",
   },
 };

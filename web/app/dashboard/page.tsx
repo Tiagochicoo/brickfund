@@ -75,14 +75,13 @@ export default function DashboardPage() {
           </p>
         </div>
         {isBusiness && (
-          <button
-            disabled
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-700 px-5 py-3 text-sm font-semibold text-white opacity-70"
-            title={t.dashboard.newListingHint}
+          <Link
+            href="/dashboard/listings/new"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-700 px-5 py-3 text-sm font-semibold text-white shadow-soft transition-all hover:bg-brand-800"
           >
             <Plus className="h-4 w-4" />
             {t.dashboard.newListing}
-          </button>
+          </Link>
         )}
       </div>
 

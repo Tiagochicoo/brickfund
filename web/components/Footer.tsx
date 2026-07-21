@@ -9,7 +9,7 @@ export default function Footer() {
 
   return (
     <footer className="mt-20 border-t border-cream-200 bg-white">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-5">
         <div className="md:col-span-2">
           <Logo />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink/55">
@@ -51,6 +51,26 @@ export default function Footer() {
             </li>
             <li>
               <span className="cursor-default">{t.footer.contact}</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold text-brand-900">{t.footer.legal}</h4>
+          <ul className="mt-3 space-y-2 text-sm text-ink/60">
+            <li>
+              <Link href="/legal/terms" className="hover:text-brand-700">
+                {t.footer.terms}
+              </Link>
+            </li>
+            <li>
+              <Link href="/legal/privacy" className="hover:text-brand-700">
+                {t.footer.privacy}
+              </Link>
+            </li>
+            <li>
+              <Link href="/legal/risk" className="hover:text-brand-700">
+                {t.footer.risk}
+              </Link>
             </li>
           </ul>
         </div>

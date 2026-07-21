@@ -8,11 +8,13 @@ export type TranslationDict = {
     tagline: string; platform: string; exploreBusinesses: string; raiseCapital: string;
     becomeInvestor: string; company: string; howItWorks: string; signIn: string;
     contact: string; rights: string; crafted: string;
+    legal: string; terms: string; privacy: string; risk: string;
   };
   home: {
     badge: string; heroTitle: string; heroSubtitle: string; exploreOpportunities: string;
     raiseCapital: string; statRaised: string; statBusinesses: string; statInvestors: string;
-    statFillRate: string; liveOpportunities: string; featuredTitle: string; viewAll: string;
+    statFillRate: string; statRaisedValue: string; statBusinessesValue: string; statInvestorsValue: string; statFillRateValue: string; statsNote: string;
+    liveOpportunities: string; featuredTitle: string; viewAll: string;
     typesTitle: string; typesSubtitle: string; howTitle: string; howStep: string;
     step1Title: string; step1Body: string; step2Title: string; step2Body: string;
     step3Title: string; step3Body: string; investorBadge: string; investorTitle: string;
@@ -65,6 +67,16 @@ export type TranslationDict = {
     delete: string; deleteTitle: string; deleteWarning: string; deleteConfirmBtn: string;
     deleting: string; cancel: string;
   };
+  listing: {
+    badge: string; title: string; subtitle: string; name: string; category: string;
+    investmentType: string; pitch: string; pitchPlaceholder: string; description: string;
+    descriptionPlaceholder: string; fundingGoal: string; fundingGoalHint: string;
+    publishNow: string; publishHint: string; create: string; creating: string;
+    validation: string; createError: string;
+  };
+  legal: {
+    termsTitle: string; privacyTitle: string; riskTitle: string; lastUpdated: string; counselNote: string;
+  };
   notFound: { title: string; body: string; backHome: string };
   investmentTypes: {
     seed: string; growth: string; loan: string; equity: string; revenue_share: string;
@@ -81,6 +93,9 @@ export type TranslationDict = {
     processDescription: string; investmentAmountLabel: string;
     noteToBusinessLabel: string; noteToBusinessPlaceholder: string;
     cancel: string; creating: string; createDeal: string;
+    pageBadge: string; pageTitle: string; pageSubtitle: string; findOpportunity: string;
+    dealCreated: string; emptyTitle: string; emptyBody: string; browseBusinesses: string;
+    youAreThe: string; with: string; loadError: string;
   };
 };
 
@@ -113,6 +128,10 @@ export const en: TranslationDict = {
     contact: "Contact",
     rights: "All rights reserved.",
     crafted: "Crafted for main street.",
+    legal: "Legal",
+    terms: "Terms",
+    privacy: "Privacy",
+    risk: "Risk disclosure",
   },
   home: {
     badge: "Main street meets venture capital",
@@ -121,10 +140,15 @@ export const en: TranslationDict = {
       "Brickfund connects profitable brick-and-mortar businesses with investors — from a restaurant expanding its terrace to a gym opening its doors.",
     exploreOpportunities: "Explore opportunities",
     raiseCapital: "Raise capital",
-    statRaised: "Capital raised",
-    statBusinesses: "Businesses funded",
-    statInvestors: "Active investors",
-    statFillRate: "Avg. fill rate",
+    statRaised: "Early access",
+    statBusinesses: "Live demo listings",
+    statInvestors: "Founding circle",
+    statFillRate: "Cities",
+    statRaisedValue: "Beta",
+    statBusinessesValue: "6",
+    statInvestorsValue: "Open",
+    statFillRateValue: "PT · ES",
+    statsNote: "Illustrative early-access metrics — not audited traction. Join the founding circle to shape the marketplace.",
     liveOpportunities: "Live opportunities",
     featuredTitle: "Featured businesses",
     viewAll: "View all",
@@ -306,6 +330,33 @@ export const en: TranslationDict = {
     deleting: "Deleting…",
     cancel: "Cancel",
   },
+  listing: {
+    badge: "New listing",
+    title: "Create a funding listing",
+    subtitle: "Tell investors what you're raising and why it matters.",
+    name: "Business name",
+    category: "Category",
+    investmentType: "Investment type",
+    pitch: "Short pitch",
+    pitchPlaceholder: "One sentence on what the capital funds…",
+    description: "Full description",
+    descriptionPlaceholder: "Story, numbers, use of funds…",
+    fundingGoal: "Funding goal (EUR)",
+    fundingGoalHint: "Major currency units, e.g. 50000 for €50,000",
+    publishNow: "Publish to marketplace",
+    publishHint: "Uncheck to save as hidden draft",
+    create: "Create listing",
+    creating: "Creating…",
+    validation: "Name, pitch, and a positive funding goal are required.",
+    createError: "Could not create listing. Check your connection and try again.",
+  },
+  legal: {
+    termsTitle: "Terms of use",
+    privacyTitle: "Privacy policy",
+    riskTitle: "Risk disclosure",
+    lastUpdated: "Last updated: July 2026",
+    counselNote: "This summary is not legal advice. Counsel review required before taking live capital.",
+  },
   notFound: {
     title: "Page not found",
     body: "The page or listing you're looking for doesn't exist.",
@@ -345,11 +396,22 @@ export const en: TranslationDict = {
     startInvestmentDeal: "Start an investment deal",
     startDeal: "Start a deal",
     processDescription: "You'll move through LOI → APA → escrow → handover. We'll suggest {amount}.",
-    investmentAmountLabel: "Investment amount (USD)",
+    investmentAmountLabel: "Investment amount (EUR)",
     noteToBusinessLabel: "Note to business (optional)",
     noteToBusinessPlaceholder: "A short intro, your investment thesis, conditions…",
     cancel: "Cancel",
     creating: "Creating…",
     createDeal: "Create deal",
+    pageBadge: "Escrow-protected deals",
+    pageTitle: "Your deals",
+    pageSubtitle: "LOI → APA → escrow → handover. Funds held by Stripe until both parties confirm.",
+    findOpportunity: "Find an opportunity",
+    dealCreated: "Deal created. Send the Letter of Intent to get started.",
+    emptyTitle: "No active deals",
+    emptyBody: "Browse businesses and start a deal to begin the escrow flow.",
+    browseBusinesses: "Browse businesses",
+    youAreThe: "You are the",
+    with: "with",
+    loadError: "Failed to load deals",
   },
 };
