@@ -20,13 +20,16 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     sort: "-updated",
     expand: "business,buyer,seller",
   });
-  return NextResponse.json({ deals: res.items });
+  return NextResponse.json({ deals: res.items, userId: user.id });
 }
 
 // POST /api/deals — create a new deal (investor initiates on a business)
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const user = await getCurrentUser(req);
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (user.role !== "investor") {
+    return NextResponse.json({ error: "only investor accounts can start deals" }, { status: 403 });
+  }
 
   const body = (await req.json()) as { businessId?: string; amountCents?: number; note?: string };
   if (!body.businessId || typeof body.amountCents !== "number" || body.amountCents < 1000) {
@@ -43,6 +46,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "cannot invest in your own listing" }, { status: 400 });
   }
 
+  // fundingGoal / fundingRaised are major currency units (EUR) in the marketplace
+  const remainingMajor = Math.max(0, (business.fundingGoal ?? 0) - (business.fundingRaised ?? 0));
+  const remainingCents = Math.round(remainingMajor * 100);
+  if (remainingCents > 0 && body.amountCents > remainingCents) {
+    return NextResponse.json(
+      { error: `amount exceeds remaining raise (${remainingCents} cents)` },
+      { status: 400 }
+    );
+  }
+
   const seller = await pb.collection("users").getOne<User>(sellerId);
 
   const platformFeeCents = calculatePlatformFee(body.amountCents);
@@ -54,7 +67,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     description: body.note?.trim() || `Investment from ${user.name} into ${business.name}.`,
     priceCents: body.amountCents,
     platformFeeCents,
-    currency: "usd",
+    currency: "eur",
     state: "negotiating",
   });
 
@@ -75,5 +88,5 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 }
 
 function formatCents(cents: number): string {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "EUR" }).format(cents / 100);
 }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
 import { formatCurrency } from "@/lib/constants";
+import { apiFetch } from "@/lib/api-client";
 
 export function StartDealButton({ businessId, businessName, suggestedAmount }: {
   businessId: string;
@@ -29,9 +30,8 @@ export function StartDealButton({ businessId, businessName, suggestedAmount }: {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/deals", {
+      const res = await apiFetch("/api/deals", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           businessId,
           amountCents: Math.round(amount * 100),
