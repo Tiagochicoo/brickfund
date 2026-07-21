@@ -11,13 +11,15 @@ const isProd = process.env.NODE_ENV === "production";
 
 const _appUrl = read("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
 const _sessionSecret = read("SESSION_SECRET", "dev-only-secret-change-me-32-chars-min");
-const _pbUrl = read("NEXT_PUBLIC_PB_URL", read("PB_URL", "http://127.0.0.1:8090"));
+// Prefer internal URL for server-side admin (localhost), public URL only as fallback
+const _pbUrl = read("PB_URL", read("NEXT_PUBLIC_PB_URL", "http://127.0.0.1:8093"));
 const _pbAdminEmail = read("PB_ADMIN_EMAIL");
 const _pbAdminPassword = read("PB_ADMIN_PASSWORD");
 const _stripeSecretKey = read("STRIPE_SECRET_KEY");
 const _stripePublishableKey = read("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", read("STRIPE_PUBLISHABLE_KEY"));
 const _stripeWebhookSecret = read("STRIPE_WEBHOOK_SECRET");
-const _documensoBaseUrl = read("DOCUMENSO_BASE_URL", "http://localhost:3001");
+// Avoid 3001 — production Next often binds PORT=3001
+const _documensoBaseUrl = read("DOCUMENSO_BASE_URL", "http://localhost:3100");
 const _documensoApiToken = read("DOCUMENSO_API_TOKEN");
 const _documensoWebhookSecret = read("DOCUMENSO_WEBHOOK_SECRET");
 const _documensoLoiTemplateId = read("DOCUMENSO_LOI_TEMPLATE_ID");

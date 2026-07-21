@@ -8,6 +8,7 @@ export const zh: TranslationDict = {
   },
   nav: {
     explore: "探索",
+    deals: "Deals",
     howItWorks: "如何运作",
     forInvestors: "投资者专区",
     signIn: "登录",

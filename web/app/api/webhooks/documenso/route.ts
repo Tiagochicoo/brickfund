@@ -36,8 +36,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const externalId = `${documentId}:${eventType}:${payload.createdAt}`;
-  const { firstSeen } = await consumeWebhook("documenso", externalId, payload);
-  if (!firstSeen) return NextResponse.json({ received: true, duplicate: true });
+  const { shouldProcess } = await consumeWebhook("documenso", externalId, payload);
+  if (!shouldProcess) return NextResponse.json({ received: true, duplicate: true });
 
   const pb = await adminPb();
   try {

@@ -1,7 +1,7 @@
 import type { PocketBase } from "./pb-admin";
 import { adminPb } from "./pb-admin";
 import { stripe } from "./stripe";
-import type { DealEventRow, DealRow, DealState, WebhookEventRow } from "./types";
+import type { DealEventRow, DealRow, DealState } from "./types";
 
 import { DEAL_STATE_LABELS } from "../deal-labels";
 
@@ -104,40 +104,8 @@ export async function logEvent(
   });
 }
 
-// Idempotency: webhook handlers dedupe against the webhook_events collection.
-// Record id = external id (Stripe event id or `${docId}:${event}:${createdAt}`).
-// Insert via create — duplicate id throws, which is exactly what we want.
-export async function consumeWebhook(
-  source: "stripe" | "documenso",
-  externalId: string,
-  payload: unknown
-): Promise<{ firstSeen: boolean }> {
-  const pb = await adminPb();
-  try {
-    await pb.collection("webhook_events").create<WebhookEventRow>({
-      id: externalId,
-      source,
-      processed: false,
-      error: null,
-      payload: payload as never,
-    });
-    return { firstSeen: true };
-  } catch {
-    return { firstSeen: false };
-  }
-}
-
-export async function markWebhookProcessed(externalId: string, error?: string): Promise<void> {
-  const pb = await adminPb();
-  try {
-    await pb.collection("webhook_events").update<WebhookEventRow>(externalId, {
-      processed: !error,
-      error: error ?? null,
-    });
-  } catch {
-    // best-effort
-  }
-}
+// Idempotency helpers (retry-safe) — see webhook-idempotency.ts
+export { consumeWebhook, markWebhookProcessed } from "./webhook-idempotency";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Stripe fund release — source_transaction guarantees the transfer can't fail.

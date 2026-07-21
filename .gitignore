@@ -4,15 +4,23 @@ node_modules/
 # PocketBase data (auto-generated)
 backend/pb_data/
 backend/pb.log
+backend/pocketbase.macos
+backend/*.macos
+backend/pocketbase.tar.gz
 
 # Next.js
 web/.next/
 web/out/
+web/app/favicon.ico.bak
+web/public/test-mobile-menu.html
 
-# Environment
+# Environment (keep *.example)
 .env
 .env.local
+**/.env.local
 .env*.local
+!.env.example
+!**/.env.example
 
 # OS / IDE
 .DS_Store

@@ -23,8 +23,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "invalid signature" }, { status: 400 });
   }
 
-  const { firstSeen } = await consumeWebhook("stripe", event.id, event);
-  if (!firstSeen) return NextResponse.json({ received: true, duplicate: true });
+  const { shouldProcess } = await consumeWebhook("stripe", event.id, event);
+  if (!shouldProcess) return NextResponse.json({ received: true, duplicate: true });
 
   const pb = await adminPb();
   try {
@@ -78,13 +78,21 @@ async function handleEvent(pb: Awaited<ReturnType<typeof adminPb>>, event: Strip
         message: `Escrow funded (${pi.amount / 100} ${pi.currency.toUpperCase()}) — funds held on platform balance`,
         metadata: { paymentIntentId: pi.id },
       });
-      // Increment marketplace progress (priceCents → major units)
+      // Idempotent fundingRaised bump (once per deal)
       try {
         const deal = await pb.collection("deals").getOne<DealRow>(dealId);
-        const biz = await pb.collection("businesses").getOne<{ id: string; fundingRaised: number; fundingGoal: number }>(deal.business);
-        const add = deal.priceCents / 100;
-        const next = Math.min((biz.fundingRaised || 0) + add, biz.fundingGoal || Number.MAX_SAFE_INTEGER);
-        await pb.collection("businesses").update(biz.id, { fundingRaised: next });
+        const already = await pb.collection("deal_events").getList(1, 1, {
+          filter: `deal = "${dealId}" && type = "funding_counted"`,
+        });
+        if (already.totalItems === 0) {
+          const biz = await pb.collection("businesses").getOne<{ id: string; fundingRaised: number; fundingGoal: number }>(deal.business);
+          const add = deal.priceCents / 100;
+          const next = Math.min((biz.fundingRaised || 0) + add, biz.fundingGoal || Number.MAX_SAFE_INTEGER);
+          await pb.collection("businesses").update(biz.id, { fundingRaised: next });
+          await logEvent(pb, dealId, "funding_counted", `Counted €${add} toward listing progress`, {
+            metadata: { amountMajor: add, paymentIntentId: pi.id },
+          });
+        }
       } catch (e) {
         console.error("[stripe webhook] fundingRaised update failed", e);
       }

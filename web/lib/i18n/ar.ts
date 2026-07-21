@@ -8,6 +8,7 @@ export const ar: TranslationDict = {
   },
   nav: {
     explore: "استكشف",
+    deals: "Deals",
     howItWorks: "كيف يعمل",
     forInvestors: "للمستثمرين",
     signIn: "تسجيل الدخول",
