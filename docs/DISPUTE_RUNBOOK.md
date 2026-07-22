@@ -1,29 +1,62 @@
-# Dispute resolution runbook
+# Dispute resolution guide
 
-## When a deal is `disputed`
+## What is a disputed deal?
 
-Either party can open a dispute from `funds_held` (or from `handover_confirmed` via API). Funds remain on the platform Stripe balance until resolved.
+Either party can open a dispute when the deal state is `funds_held` or `handover_confirmed`. Funds stay on the platform Stripe balance until you resolve the dispute.
 
-## Operator steps
+## How to resolve a dispute
 
-1. **Identify deal** — PocketBase Admin → `deals` → filter `state = "disputed"`. Note `buyer`, `seller`, `priceCents`, `paymentIntentId`, `chargeId`.
-2. **Read timeline** — `deal_events` for that deal id (messages + metadata).
-3. **Contact parties** — email both sides; request evidence (handover photos, signed APA, shipping, etc.).
-4. **Decide outcome**
-   - **Refund buyer** — only if no `transferId` yet. Use Stripe Dashboard refund on the PaymentIntent **or** call resolve API as buyer (buyer-only policy in app). Prefer Dashboard for operator control; then ensure webhook marks `refunded`.
-   - **Release to seller** — if handover is verified: ensure both confirmations (or set intentionally after written consent), then run release path / complete transfer with `source_transaction = chargeId`.
-   - **Partial** — handle manually in Stripe; log `deal_events` note via Admin.
-5. **Log** — create a `deal_events` row: type `admin_resolution`, message summarizing decision, actor = operator user id if available.
-6. **Close** — confirm final `state` is `refunded`, `completed`, or returned to `funds_held` with clear notes.
+1. Find the deal
+   - Open PocketBase Admin.
+   - Go to `deals`.
+   - Filter by `state = "disputed"`.
+   - Note the `buyer`, `seller`, `priceCents`, `paymentIntentId`, and `chargeId`.
 
-## App limitations (current)
+2. Read the timeline
+   - Open `deal_events` for that deal.
+   - Read the messages and metadata.
 
-- No full admin UI yet — use PocketBase Admin + Stripe Dashboard.
-- Refund API is **buyer-initiated** only (security). Operator refunds via Stripe Dashboard.
-- After `transferId` is set, in-app refund is blocked.
+3. Contact both parties
+   - Send email to both sides.
+   - Ask for evidence (photos, signed APA, shipping info, etc.).
 
-## Prevention
+4. Decide the outcome
 
-- Require LOI+APA completion before fund.
-- Prefer clear handover checklists in deal room copy.
-- Keep `DOCUMENSO_WEBHOOK_SECRET` and Stripe webhook secrets set in production.
+   Choose one of these options:
+
+   - **Refund to buyer**
+     - Only possible if no `transferId` exists.
+     - Go to Stripe Dashboard.
+     - Refund the PaymentIntent.
+     - The webhook will update the deal state to `refunded`.
+
+   - **Release to seller**
+     - Only after you verify handover.
+     - Ensure both parties confirmed (or you have written consent).
+     - The system runs the transfer.
+     - The transfer uses `source_transaction = chargeId`.
+
+   - **Partial refund**
+     - Use Stripe Dashboard manually.
+     - Log a note in `deal_events`.
+
+5. Log the decision
+   - Create a `deal_events` row.
+   - Set type to `admin_resolution`.
+   - Write a summary of the decision.
+   - Set actor to your user ID if possible.
+
+6. Close the case
+   - Confirm the final state is `refunded`, `completed`, or back to `funds_held` with clear notes.
+
+## Current limitations
+
+- There is no full admin UI. Use PocketBase Admin and Stripe Dashboard.
+- The app only allows buyer-initiated refunds (for security).
+- After `transferId` is set, the app blocks refunds.
+
+## How to prevent disputes
+
+- Require LOI and APA completion before funding.
+- Add clear handover checklists in the deal room.
+- Keep `DOCUMENSO_WEBHOOK_SECRET` and Stripe webhook secrets secure.

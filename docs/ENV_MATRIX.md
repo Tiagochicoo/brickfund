@@ -1,20 +1,19 @@
-# Production environment matrix
+# Environment variables
 
-| Variable | Required for | Notes |
-|----------|--------------|-------|
-| `NEXT_PUBLIC_APP_URL` | redirects, Documenso return URLs | e.g. `https://brick-fund.com` |
-| `NEXT_PUBLIC_PB_URL` | browser PB SDK | public API host |
-| `PB_URL` | optional server override | internal `http://127.0.0.1:8093` |
-| `PB_ADMIN_EMAIL` | deal API, webhooks | PocketBase superuser |
-| `PB_ADMIN_PASSWORD` | deal API, webhooks | rotate from default |
-| `STRIPE_SECRET_KEY` | fund / Connect / refunds | test or live |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook verify | from Dashboard |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | escrow Payment Element | browser |
-| `DOCUMENSO_*` | LOI / APA | optional until e-sign live |
-| `PLATFORM_FEE_PERCENT` | fee calc | default `3` |
-| `SESSION_SECRET` | reserved | change in prod |
+| Variable | Purpose | Notes |
+|----------|---------|-------|
+| `NEXT_PUBLIC_APP_URL` | Redirects and return URLs | Example: `https://brick-fund.com` |
+| `NEXT_PUBLIC_PB_URL` | PocketBase client URL | Public API address |
+| `PB_URL` | Internal PocketBase URL | Use `http://127.0.0.1:8093` for server calls |
+| `PB_ADMIN_EMAIL` | PocketBase superuser email | Required for admin operations |
+| `PB_ADMIN_PASSWORD` | PocketBase superuser password | Change this from the default |
+| `STRIPE_SECRET_KEY` | Stripe API key | Use test key or live key |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook verification | Get this from Stripe Dashboard |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe public key | Browser uses this key |
+| `DOCUMENSO_*` | Documenso configuration | Required for e-signatures |
+| `PLATFORM_FEE_PERCENT` | Platform fee percentage | Default is `3` |
+| `SESSION_SECRET` | Session encryption | Change this in production |
 
-Template: `web/.env.example`.
+Copy `web/.env.example` to `web/.env.local` and fill in the values.
 
-Server logs a **warning** at boot in production if critical vars are missing.
-`adminPb()` will throw when admin credentials are absent in production.
+The system logs a warning at startup if critical variables are missing. The admin client fails if credentials are missing.
