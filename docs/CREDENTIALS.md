@@ -1,17 +1,19 @@
-# Credentials hygiene
+# Credentials security
 
-## Production
-- Never use `admin@brickfund.local` / `brickfund1234` on a public host.
-- Set strong unique `PB_ADMIN_EMAIL` + `PB_ADMIN_PASSWORD` and store only in server env / secret manager.
-- Rotate Stripe and Documenso secrets if they ever appeared in chat logs or commits.
-- Demo users from seed (`business@brickfund.local`, `investor@brickfund.local`) should be **deleted or password-rotated** on production databases.
+## Production environment
 
-## Local dev
-- `backend/setup.sh` / `start.sh` may upsert a default superuser for convenience.
-- Acceptable on loopback only.
+- Do not use `admin@brickfund.local` / `brickfund1234` on a public host.
+- Set strong `PB_ADMIN_EMAIL` and `PB_ADMIN_PASSWORD`. Store them in server environment variables only.
+- Change Stripe and Documenso secrets if they appear in chat logs or commits.
+- Delete or change passwords for demo users (`business@brickfund.local`, `investor@brickfund.local`) on production databases.
+
+## Local development
+
+- `backend/setup.sh` and `start.sh` may create a default superuser. This is acceptable for local testing only.
 
 ## Checklist
-- [ ] Prod admin password ≠ default
-- [ ] Demo seed users disabled on prod
-- [ ] `.env.local` not committed
-- [ ] Webhook secrets required in prod
+
+- [ ] Production admin password is not the default.
+- [ ] Demo seed users are disabled in production.
+- [ ] `.env.local` is not committed to Git.
+- [ ] Webhook secrets are set in production.

@@ -1,137 +1,147 @@
 # Brickfund
 
-Marketplace connecting **brick-and-mortar businesses** with investors. Listings carry clear investment-type pills (Seed, Growth, Loan, Equity, Revenue Share, Convertible Note). Deals move through LOI → APA → Stripe escrow → dual handover → release.
+This marketplace connects local businesses with investors. Businesses list opportunities. Investors fund deals through escrow.
 
-| | Production | Local defaults |
-|--|------------|----------------|
-| App | https://brick-fund.com | http://127.0.0.1:3001 |
-| API (PocketBase) | https://api.brick-fund.com | http://127.0.0.1:8093 |
-| Branches | `master` (prod) · `dev` (staging) | either |
+## URLs and ports
 
----
+| Environment | App URL | API URL |
+|-------------|---------|---------|
+| Production | https://brick-fund.com | https://api.brick-fund.com |
+| Local | http://127.0.0.1:3001 | http://127.0.0.1:8093 |
 
-## Stack
+The `master` branch is for production. The `dev` branch is for staging.
 
-| Layer | Tech |
-|-------|------|
-| Frontend | Next.js 16 (App Router), React 19, Tailwind v4 |
-| Backend | PocketBase (SQLite + REST + auth) |
-| Payments | Stripe Connect Express + PaymentIntents (escrow) |
-| E-sign | Documenso CE (optional until configured) |
-| Hosting (this repo) | systemd user units + Cloudflare Tunnels on Pi |
+## Software components
 
----
+| Layer | Technology |
+|-------|------------|
+| Frontend | Next.js 16, React 19, Tailwind v4 |
+| Backend | PocketBase (SQLite database) |
+| Payments | Stripe Connect (escrow) |
+| E-signatures | Documenso (optional) |
+| Hosting | systemd, Cloudflare Tunnels |
 
-## Features
+## Main features
 
-- Role-based auth (business / investor)
-- Public marketplace with filters (type, city, search)
-- Business dashboard: create, publish/hide, delete listings
-- Investor deal room: LOI/APA, fund escrow, confirm handover, dispute/refund
-- i18n (11 locales)
-- Legal pages: Terms, Privacy, Risk
+- Users register as businesses or investors
+- Public listings with filters
+- Business dashboard to create listings
+- Deal room for investors (LOI, APA, funding, handover)
+- Support for 11 languages
+- Legal pages (Terms, Privacy, Risk)
 
----
+## How to start
 
-## Quick start
+### Step 1: Start the backend
 
-### 1. Backend
+Run these commands:
 
 ```bash
 cd backend
-./setup.sh          # migrate + superuser + serve (default :8090 in script; prod unit uses :8093)
+./setup.sh
 ```
 
-Superuser: set `PB_ADMIN_EMAIL` / `PB_ADMIN_PASSWORD`. Local `setup.sh` may create a **dev-only** default — never reuse on the public internet. See [docs/CREDENTIALS.md](docs/CREDENTIALS.md).
+This script runs migrations and starts PocketBase. The default port is 8090. Production uses port 8093.
 
-### 2. Frontend
+Set the `PB_ADMIN_EMAIL` and `PB_ADMIN_PASSWORD` environment variables. Do not use default passwords in production. See [docs/CREDENTIALS.md](docs/CREDENTIALS.md).
+
+### Step 2: Start the frontend
+
+Run these commands:
 
 ```bash
 cd web
-cp .env.example .env.local   # fill values — see docs/ENV_MATRIX.md
+cp .env.example .env.local
 npm install
-npm run dev                  # http://localhost:3000
-# production-style:
-npm run build && npm run start   # PORT=3001 in systemd
+npm run dev
 ```
 
-### 3. Optional: Documenso
+The app runs at http://localhost:3000.
+
+For production, run:
 
 ```bash
-docker compose up -d         # see docker-compose.yml — do not bind the same port as Next prod
+npm run build
+npm run start
 ```
 
-### 4. Stripe webhooks (local)
+The production port is 3001.
+
+See [docs/ENV_MATRIX.md](docs/ENV_MATRIX.md) for required environment variables.
+
+### Step 3: Start Documenso (optional)
+
+Run this command:
+
+```bash
+docker compose up -d
+```
+
+Documenso uses port 3100. Do not use the same port as the frontend.
+
+### Step 4: Test Stripe webhooks (local)
+
+Run this command:
 
 ```bash
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ```
 
----
+## How a deal works
 
-## Deal flow
+1. Investor starts a deal → State: `negotiating`
+2. Business sends LOI → State: `loi_sent` → Investor signs → State: `loi_signed`
+3. Business sends APA → State: `apa_sent` → Investor signs → State: `apa_signed`
+4. Investor pays → State: `funds_held`
+5. Both parties confirm handover → State: `completed` → Funds transfer to seller
 
-```
-Investor starts deal          → negotiating
-Send LOI (Documenso)          → loi_sent → loi_signed
-Send APA                      → apa_sent → apa_signed
-Buyer funds PaymentIntent     → funds_held  (+ fundingRaised++)
-Both confirm handover         → handover_confirmed → Transfer → completed
-```
+The platform fee is 3% by default. Set the `PLATFORM_FEE_PERCENT` variable to change this.
 
-Platform fee: `PLATFORM_FEE_PERCENT` (default 3%). Seller receives `priceCents` via Transfer with `source_transaction`.
-
----
-
-## Project layout
+## Project structure
 
 ```
 brickfund/
 ├── backend/
-│   ├── pocketbase                 # linux aarch64 binary (do not commit foreign binaries)
-│   ├── pb_migrations/             # schema as code
-│   ├── setup.sh / start.sh
-│   └── pb_data/                   # gitignored
-├── web/                           # Next.js app
-│   ├── app/                       # routes + api/*
-│   ├── components/
-│   └── lib/                       # auth, i18n, server/*
-├── docs/                          # operator + product docs
-├── scripts/                       # smoke tests
+│   ├── pocketbase (binary)
+│   ├── pb_migrations/ (database schema)
+│   ├── setup.sh
+│   └── pb_data/ (database files)
+├── web/ (Next.js app)
+│   ├── app/ (pages and API routes)
+│   ├── components/ (UI components)
+│   └── lib/ (shared code)
+├── docs/ (documentation)
+├── scripts/ (test scripts)
 ├── .github/workflows/ci.yml
-└── docker-compose.yml             # Documenso + Postgres
+└── docker-compose.yml
 ```
-
----
 
 ## Documentation
 
-| Doc | Purpose |
-|-----|---------|
-| [docs/README.md](docs/README.md) | Doc index |
-| [docs/ENV_MATRIX.md](docs/ENV_MATRIX.md) | Required environment variables |
-| [docs/CREDENTIALS.md](docs/CREDENTIALS.md) | Password / secret hygiene |
-| [docs/PRODUCTION_READINESS_CHECKLIST.md](docs/PRODUCTION_READINESS_CHECKLIST.md) | Go-live gate |
-| [docs/DISPUTE_RUNBOOK.md](docs/DISPUTE_RUNBOOK.md) | Escrow dispute ops |
-| [docs/DEPLOY-FREE.md](docs/DEPLOY-FREE.md) | Low-cost deploy options |
-| [docs/MARKETING_STRATEGY_FIRST_USERS.md](docs/MARKETING_STRATEGY_FIRST_USERS.md) | GTM for first users |
+| Document | Purpose |
+|----------|---------|
+| [docs/README.md](docs/README.md) | Documentation index |
+| [docs/ENV_MATRIX.md](docs/ENV_MATRIX.md) | Environment variables |
+| [docs/CREDENTIALS.md](docs/CREDENTIALS.md) | Password and secret security |
+| [docs/PRODUCTION_READINESS_CHECKLIST.md](docs/PRODUCTION_READINESS_CHECKLIST.md) | Go-live checklist |
+| [docs/DISPUTE_RUNBOOK.md](docs/DISPUTE_RUNBOOK.md) | How to resolve disputes |
+| [docs/DEPLOY-FREE.md](docs/DEPLOY-FREE.md) | Low-cost deployment |
+| [docs/MARKETING_STRATEGY_FIRST_USERS.md](docs/MARKETING_STRATEGY_FIRST_USERS.md) | How to get first users |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design |
-| [docs/PROJECT_REVIEW.md](docs/PROJECT_REVIEW.md) | Latest full review |
+| [docs/PROJECT_REVIEW.md](docs/PROJECT_REVIEW.md) | Latest review |
 
----
+## Demo accounts
 
-## Demo accounts (local seed only)
+These accounts exist for local testing only. Do not use them in production.
 
 | Role | Email | Password |
 |------|-------|----------|
-| Business | `business@brickfund.local` | set in seed — **dev only** |
-| Investor | `investor@brickfund.local` | set in seed — **dev only** |
+| Business | `business@brickfund.local` | See seed script |
+| Investor | `investor@brickfund.local` | See seed script |
 
-Delete or rotate these on any shared/production database.
+Delete these accounts before you go live.
 
----
-
-## Development
+## Development commands
 
 ```bash
 cd web
@@ -140,8 +150,6 @@ npm run build
 npm run lint
 npx tsx ../scripts/smoke-deal-transitions.ts
 ```
-
----
 
 ## License
 
