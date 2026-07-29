@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { NotificationBell } from "./NotificationBell";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
 
@@ -39,6 +40,7 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-2 md:flex">
           <LanguageSwitcher />
+          {user && <NotificationBell />}
           {loading ? (
             <div className="h-9 w-24 animate-pulse rounded-lg bg-cream-100" />
           ) : user ? (

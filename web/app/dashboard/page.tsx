@@ -355,13 +355,21 @@ function ListingRow({
           {business.pitch}
         </p>
       )}
-      <Link
-        href={`/businesses/${business.id}`}
-        className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
-      >
-        {t.businessDetail.editListing}
-        <ArrowRight className="h-3.5 w-3.5" />
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link
+          href={`/dashboard/listings/${business.id}/edit`}
+          className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
+        >
+          {t.businessDetail.editListing}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+        <Link
+          href={`/businesses/${business.id}`}
+          className="inline-flex items-center gap-1 text-xs text-ink/50 hover:text-brand-700"
+        >
+          View
+        </Link>
+      </div>
     </div>
   );
 }
