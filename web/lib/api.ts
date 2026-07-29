@@ -1,5 +1,6 @@
 import { getPb } from "./pb";
 import type { Business, InvestmentType, Interest, Message, SavedBusiness } from "./types";
+import { PB_URL } from "./types";
 
 // ── Businesses ──────────────────────────────────────────────────────────
 
@@ -54,9 +55,27 @@ export async function getBusiness(id: string): Promise<Business | null> {
 }
 
 export function imageUrl(business: Business): string | null {
-  if (!business.image) return null;
+  const names = imageFilenames(business);
+  if (!names.length) return null;
   const pb = getPb();
-  return pb.files.getURL(business as never, business.image);
+  return pb.files.getURL(business as never, names[0]);
+}
+
+export function imageFilenames(business: Pick<Business, "image">): string[] {
+  if (!business.image) return [];
+  return Array.isArray(business.image) ? business.image.filter(Boolean) : [business.image];
+}
+
+export function imageUrls(business: Business): string[] {
+  const names = imageFilenames(business);
+  if (!names.length) return [];
+  const pb = getPb();
+  return names.map((name) => pb.files.getURL(business as never, name));
+}
+
+export function businessImageUrl(business: Pick<Business, "id" | "image">, filename: string, thumb?: string): string {
+  const base = `${PB_URL}/api/files/businesses/${business.id}/${filename}`;
+  return thumb ? `${base}?thumb=${thumb}` : base;
 }
 
 // ── Interests ───────────────────────────────────────────────────────────

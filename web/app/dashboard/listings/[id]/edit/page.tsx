@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Lock, ArrowLeft, Save } from "lucide-react";
@@ -9,10 +9,29 @@ import { useI18n } from "@/lib/i18n";
 import { getPb } from "@/lib/pb";
 import { Button, ErrorNote, Input, Label } from "@/components/ui";
 import LocationSelect from "@/components/LocationSelect";
+import InvestmentTypePicker from "@/components/InvestmentTypePicker";
+import ImageUpload, {
+  appendImagesToFormData,
+  emptyImageUpload,
+  imageUploadFromBusiness,
+  type ImageUploadValue,
+} from "@/components/ImageUpload";
 import type { Business, InvestmentType, Category, ListingStatus } from "@/lib/types";
 
-const TYPES: InvestmentType[] = ["seed", "growth", "loan", "equity", "revenue_share", "convertible_note", "trespasse"];
 const CATS: Category[] = ["restaurant", "barber", "gym", "cafe", "retail", "salon", "bakery", "bar", "other"];
+
+function getPreset(t: ReturnType<typeof useI18n>["t"], type: InvestmentType): string {
+  const map: Record<InvestmentType, string> = {
+    seed: t.listing.useOfFundsPreset_seed,
+    growth: t.listing.useOfFundsPreset_growth,
+    loan: t.listing.useOfFundsPreset_loan,
+    equity: t.listing.useOfFundsPreset_equity,
+    revenue_share: t.listing.useOfFundsPreset_revenue_share,
+    convertible_note: t.listing.useOfFundsPreset_convertible_note,
+    trespasse: t.listing.useOfFundsPreset_trespasse,
+  };
+  return map[type];
+}
 
 export default function EditListingPage() {
   const params = useParams<{ id: string }>();
@@ -35,9 +54,13 @@ export default function EditListingPage() {
   const [revenueRange, setRevenueRange] = useState("");
   const [status, setStatus] = useState<ListingStatus>("open");
   const [published, setPublished] = useState(true);
+  const [images, setImages] = useState<ImageUploadValue>(emptyImageUpload);
   const [privateDescription, setPrivateDescription] = useState("");
   const [privateFinancials, setPrivateFinancials] = useState("");
   const [privateDeckUrl, setPrivateDeckUrl] = useState("");
+
+  const fundsTouched = useRef(true); // edit: don't overwrite existing text on load
+  const lastPreset = useRef("");
 
   useEffect(() => {
     if (!user || !params.id) return;
@@ -64,13 +87,26 @@ export default function EditListingPage() {
         setPrivateDescription(biz.privateDescription ?? "");
         setPrivateFinancials(biz.privateFinancials ?? "");
         setPrivateDeckUrl(biz.privateDeckUrl ?? "");
+        setImages(imageUploadFromBusiness(biz));
+        fundsTouched.current = Boolean(biz.useOfFunds?.trim());
+        lastPreset.current = getPreset(t, biz.investmentType);
       } catch {
         router.replace("/dashboard");
       } finally {
         setLoading(false);
       }
     })();
-  }, [user, params.id, router]);
+  }, [user, params.id, router, t]);
+
+  function handleInvestmentType(type: InvestmentType) {
+    setInvestmentType(type);
+    const next = getPreset(t, type);
+    if (!fundsTouched.current || useOfFunds.trim() === "" || useOfFunds === lastPreset.current) {
+      setUseOfFunds(next);
+      lastPreset.current = next;
+      fundsTouched.current = false;
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,28 +115,34 @@ export default function EditListingPage() {
       setError(t.listing.validation);
       return;
     }
+    if (!country || !city) {
+      setError(t.listing.cityRequired);
+      return;
+    }
     setBusy(true);
     try {
       const pb = getPb();
-      const fullLocation = city && country ? `${city}, ${country}` : "";
-      await pb.collection("businesses").update(params.id, {
-        name: name.trim(),
-        category,
-        investmentType,
-        location: fullLocation.trim(),
-        city: city.trim(),
-        country: country.trim(),
-        pitch: pitch.trim(),
-        description: description.trim(),
-        status,
-        capitalSought: capitalSought.trim(),
-        useOfFunds: useOfFunds.trim(),
-        revenueRange: revenueRange.trim(),
-        privateDescription: privateDescription.trim(),
-        privateFinancials: privateFinancials.trim(),
-        privateDeckUrl: privateDeckUrl.trim(),
-        published,
-      });
+      const fullLocation = `${city}, ${country}`;
+      const fd = new FormData();
+      fd.append("name", name.trim());
+      fd.append("category", category);
+      fd.append("investmentType", investmentType);
+      fd.append("location", fullLocation);
+      fd.append("city", city.trim());
+      fd.append("country", country.trim());
+      fd.append("pitch", pitch.trim());
+      fd.append("description", description.trim());
+      fd.append("status", status);
+      fd.append("capitalSought", capitalSought.trim());
+      fd.append("useOfFunds", useOfFunds.trim());
+      fd.append("revenueRange", revenueRange.trim());
+      fd.append("privateDescription", privateDescription.trim());
+      fd.append("privateFinancials", privateFinancials.trim());
+      fd.append("privateDeckUrl", privateDeckUrl.trim());
+      fd.append("published", published ? "true" : "false");
+      appendImagesToFormData(fd, images);
+
+      await pb.collection("businesses").update(params.id, fd);
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : t.listing.createError);
@@ -123,73 +165,105 @@ export default function EditListingPage() {
         <ArrowLeft className="h-4 w-4" />
         {t.dashboard.yourListings}
       </Link>
-      <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-brand-950">Edit listing</h1>
+      <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-brand-950">{t.listing.title}</h1>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-6">
-        <div className="rounded-2xl border border-cream-200 bg-white p-5 space-y-4">
+        <div className="space-y-4 rounded-2xl border border-cream-200 bg-white p-5">
           <div>
             <Label htmlFor="name">{t.listing.name}</Label>
-            <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Bella Vista Trattoria" />
+            <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label htmlFor="category">{t.listing.category}</Label>
-              <select id="category" value={category} onChange={(e) => setCategory(e.target.value as Category)}
-                className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400">
-                {CATS.map((c) => <option key={c} value={c}>{t.categories[c]}</option>)}
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="type">{t.listing.investmentType}</Label>
-              <select id="type" value={investmentType} onChange={(e) => setInvestmentType(e.target.value as InvestmentType)}
-                className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400">
-                {TYPES.map((tp) => <option key={tp} value={tp}>{t.investmentTypes[tp]}</option>)}
-              </select>
-            </div>
+
+          <ImageUpload businessId={params.id} value={images} onChange={setImages} />
+
+          <div>
+            <Label htmlFor="category">{t.listing.category}</Label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value as Category)}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400"
+            >
+              {CATS.map((c) => (
+                <option key={c} value={c}>
+                  {t.categories[c]}
+                </option>
+              ))}
+            </select>
           </div>
-          <LocationSelect country={country} city={city} onCountryChange={setCountry} onCityChange={setCity} />
+
+          <InvestmentTypePicker value={investmentType} onChange={handleInvestmentType} />
+
+          <LocationSelect country={country} city={city} onCountryChange={setCountry} onCityChange={setCity} required />
+
           <div>
             <Label htmlFor="pitch">{t.listing.pitch}</Label>
             <Input id="pitch" required value={pitch} onChange={(e) => setPitch(e.target.value)} placeholder={t.listing.pitchPlaceholder} />
           </div>
           <div>
             <Label htmlFor="desc">{t.listing.description}</Label>
-            <textarea id="desc" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.listing.descriptionPlaceholder}
-              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400" />
+            <textarea
+              id="desc"
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400"
+            />
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <Label htmlFor="capital" hint={t.listing.capitalSoughtHint}>{t.listing.capitalSought}</Label>
-              <Input id="capital" value={capitalSought} onChange={(e) => setCapitalSought(e.target.value)} placeholder="€50,000 - €100,000" />
+              <Label htmlFor="capital" hint={t.listing.capitalSoughtHint}>
+                {t.listing.capitalSought}
+              </Label>
+              <Input id="capital" value={capitalSought} onChange={(e) => setCapitalSought(e.target.value)} />
             </div>
             <div>
-              <Label htmlFor="revenue" hint={t.listing.revenueRangeHint}>{t.listing.revenueRange}</Label>
-              <Input id="revenue" value={revenueRange} onChange={(e) => setRevenueRange(e.target.value)} placeholder="€200k - €500k/yr" />
-            </div>
-            <div>
-              <Label htmlFor="status">{t.listing.statusLabel}</Label>
-              <select id="status" value={status} onChange={(e) => setStatus(e.target.value as ListingStatus)}
-                className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400">
-                <option value="open">{t.listing.statusOpen}</option>
-                <option value="paused">{t.listing.statusPaused}</option>
-                <option value="closed">{t.listing.statusClosed}</option>
-              </select>
+              <Label htmlFor="revenue" hint={t.listing.revenueRangeHint}>
+                {t.listing.revenueRange}
+              </Label>
+              <Input id="revenue" value={revenueRange} onChange={(e) => setRevenueRange(e.target.value)} />
             </div>
           </div>
           <div>
-            <Label htmlFor="useOfFunds" hint={t.listing.useOfFundsHint}>{t.listing.useOfFunds}</Label>
-            <textarea id="useOfFunds" rows={2} value={useOfFunds} onChange={(e) => setUseOfFunds(e.target.value)}
-              placeholder="Equipment purchase, location expansion, working capital..."
-              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400" />
+            <Label htmlFor="status">{t.listing.statusLabel}</Label>
+            <select
+              id="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ListingStatus)}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400"
+            >
+              <option value="open">{t.listing.statusOpen}</option>
+              <option value="paused">{t.listing.statusPaused}</option>
+              <option value="closed">{t.listing.statusClosed}</option>
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="useOfFunds" hint={t.listing.useOfFundsHint}>
+              {t.listing.useOfFunds}
+            </Label>
+            <textarea
+              id="useOfFunds"
+              rows={6}
+              value={useOfFunds}
+              onChange={(e) => {
+                fundsTouched.current = true;
+                setUseOfFunds(e.target.value);
+              }}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400"
+            />
           </div>
           <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-3.5">
-            <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-cream-200 accent-brand-600" />
+            <input
+              type="checkbox"
+              checked={published}
+              onChange={(e) => setPublished(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-cream-200 accent-brand-600"
+            />
             <span className="text-sm text-ink/70">{t.listing.publishNow}</span>
           </label>
         </div>
 
-        <div className="rounded-2xl border border-brand-200 bg-brand-50 p-5 space-y-4">
+        <div className="space-y-4 rounded-2xl border border-brand-200 bg-brand-50 p-5">
           <div className="flex items-center gap-2">
             <Lock className="h-4 w-4 text-brand-600" />
             <h3 className="text-sm font-semibold text-brand-900">{t.listing.privateSection}</h3>
@@ -197,13 +271,23 @@ export default function EditListingPage() {
           <p className="text-xs text-ink/55">{t.listing.privateSectionHint}</p>
           <div>
             <Label htmlFor="privDesc">{t.listing.privateDescription}</Label>
-            <textarea id="privDesc" rows={3} value={privateDescription} onChange={(e) => setPrivateDescription(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400" />
+            <textarea
+              id="privDesc"
+              rows={3}
+              value={privateDescription}
+              onChange={(e) => setPrivateDescription(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400"
+            />
           </div>
           <div>
             <Label htmlFor="privFin">{t.listing.privateFinancials}</Label>
-            <textarea id="privFin" rows={3} value={privateFinancials} onChange={(e) => setPrivateFinancials(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400" />
+            <textarea
+              id="privFin"
+              rows={3}
+              value={privateFinancials}
+              onChange={(e) => setPrivateFinancials(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400"
+            />
           </div>
           <div>
             <Label htmlFor="privDeck">{t.listing.privateDeckUrl}</Label>
@@ -214,7 +298,7 @@ export default function EditListingPage() {
         <ErrorNote>{error}</ErrorNote>
         <Button type="submit" disabled={busy}>
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {busy ? "Saving..." : "Save changes"}
+          {busy ? t.dashboard.saving : t.listing.create}
         </Button>
       </form>
     </div>

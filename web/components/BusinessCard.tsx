@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, BadgeCheck } from "lucide-react";
 import type { Business } from "@/lib/types";
-import { PB_URL } from "@/lib/types";
+import { imageFilenames, businessImageUrl } from "@/lib/api";
 import InvestmentPill from "./InvestmentPill";
 import { useI18n } from "@/lib/i18n";
 
@@ -23,9 +23,9 @@ const UNSPLASH_IMAGES: Record<string, string> = {
 export default function BusinessCard({ business }: { business: Business }) {
   const { t } = useI18n();
   const catLabel = t.categories[business.category];
-  const hasImage = business.image && business.image.length > 0;
-  const imageUrl = hasImage
-    ? `${PB_URL}/api/files/businesses/${business.id}/${business.image}`
+  const names = imageFilenames(business);
+  const imageUrl = names.length
+    ? businessImageUrl(business, names[0], "800x600")
     : UNSPLASH_IMAGES[business.category] ?? UNSPLASH_IMAGES.other;
 
   return (
@@ -40,6 +40,7 @@ export default function BusinessCard({ business }: { business: Business }) {
           fill
           className="object-cover"
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          unoptimized={imageUrl.includes("/api/files/")}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/50" />
 

@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, ArrowLeft, Target, TrendingUp, ShieldCheck, Lock, CheckCircle2, BadgeCheck, MessageSquare } from "lucide-react";
-import { getBusiness, checkInterest } from "@/lib/api";
+import { getBusiness, checkInterest, imageFilenames, businessImageUrl } from "@/lib/api";
 import { CATEGORIES } from "@/lib/constants";
 import InvestmentPill from "@/components/InvestmentPill";
 import { InterestButton } from "@/components/InterestButton";
@@ -13,7 +13,6 @@ import { SaveButton } from "@/components/SaveButton";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import type { Business, User, Interest } from "@/lib/types";
-import { PB_URL } from "@/lib/types";
 
 const BANNERS: Record<string, string> = {
   restaurant: "from-amber-500 to-rose-500",
@@ -81,10 +80,11 @@ export default function BusinessDetailPage() {
   const cat = CATEGORIES[business.category] ?? CATEGORIES.other;
   const catLabel = t.categories[business.category];
   const owner = business.expand?.owner as User | undefined;
-  const hasImage = business.image && business.image.length > 0;
-  const imageUrl = hasImage
-    ? `${PB_URL}/api/files/businesses/${business.id}/${business.image}`
+  const names = imageFilenames(business);
+  const coverUrl = names.length
+    ? businessImageUrl(business, names[0], "800x600")
     : UNSPLASH_IMAGES[business.category] ?? UNSPLASH_IMAGES.other;
+  const gallery = names.slice(1).map((n) => businessImageUrl(business, n, "400x300"));
   const hasExpressedInterest = !!interest;
   const isOwner = user?.id === business.owner;
 
@@ -97,15 +97,20 @@ export default function BusinessDetailPage() {
 
       <div className={`relative mt-4 flex h-48 items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br ${BANNERS[business.category] ?? BANNERS.other} sm:h-64`}>
         <Image
-          src={imageUrl}
+          src={coverUrl}
           alt={business.name}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
           priority
+          unoptimized={coverUrl.includes("/api/files/")}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/50" />
-        <span className="text-6xl drop-shadow sm:text-7xl" aria-hidden="true">{cat.emoji}</span>
+        {!names.length && (
+          <span className="relative z-10 text-6xl drop-shadow sm:text-7xl" aria-hidden="true">
+            {cat.emoji}
+          </span>
+        )}
         <div className="absolute left-5 top-5 z-10 flex gap-2">
           <InvestmentPill type={business.investmentType} />
           {business.vetted && (
@@ -116,6 +121,16 @@ export default function BusinessDetailPage() {
           )}
         </div>
       </div>
+
+      {gallery.length > 0 && (
+        <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+          {gallery.map((src, i) => (
+            <div key={src} className="relative aspect-[4/3] overflow-hidden rounded-xl border border-cream-200">
+              <Image src={src} alt="" fill className="object-cover" sizes="160px" unoptimized />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_22rem]">
         <div>
