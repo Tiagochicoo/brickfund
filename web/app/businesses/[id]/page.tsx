@@ -9,6 +9,7 @@ import { getBusiness, checkInterest } from "@/lib/api";
 import { CATEGORIES } from "@/lib/constants";
 import InvestmentPill from "@/components/InvestmentPill";
 import { InterestButton } from "@/components/InterestButton";
+import { SaveButton } from "@/components/SaveButton";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import type { Business, User, Interest } from "@/lib/types";
@@ -223,13 +224,18 @@ export default function BusinessDetailPage() {
             </dl>
 
             {user?.role === "investor" && !isOwner ? (
-              <InterestButton businessId={business.id} businessOwner={business.owner} />
+              <div className="mt-6 flex items-center gap-2">
+                <div className="flex-1">
+                  <InterestButton businessId={business.id} businessOwner={business.owner} />
+                </div>
+                <SaveButton businessId={business.id} />
+              </div>
             ) : !user ? (
               <Link href="/register" className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-brand-700 px-4 py-3 text-sm font-semibold text-white shadow-soft transition-all hover:bg-brand-800">
                 {t.businessDetail.expressInterest}
               </Link>
             ) : isOwner ? (
-              <Link href="/dashboard" className="mt-6 inline-flex w-full items-center justify-center rounded-xl border border-cream-200 bg-white px-4 py-3 text-sm font-semibold text-brand-800 hover:bg-cream-100">
+              <Link href={`/dashboard/listings/${business.id}/edit`} className="mt-6 inline-flex w-full items-center justify-center rounded-xl border border-cream-200 bg-white px-4 py-3 text-sm font-semibold text-brand-800 hover:bg-cream-100">
                 {t.businessDetail.editListing}
               </Link>
             ) : null}
