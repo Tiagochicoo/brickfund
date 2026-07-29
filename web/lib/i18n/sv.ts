@@ -16,6 +16,8 @@ export const sv: TranslationDict = {
     dashboard: "Översikt",
     signOut: "Logga ut",
     toggleMenu: "Växla meny",
+    changeLanguage: "Byt språk",
+    homeAria: "Brickfund startsida",
   },
   footer: {
     tagline:
@@ -34,6 +36,7 @@ export const sv: TranslationDict = {
     terms: "Villkor",
     privacy: "Integritet",
     risk: "Riskupplysning",
+    copyright: "© 2026 Brickfund. Alla rättigheter förbehållna.",
   },
   home: {
     badge: "Huvudgatan möter riskkapital",
@@ -48,9 +51,9 @@ export const sv: TranslationDict = {
     statFillRate: "Genomsnittlig fyllnadsgrad",
     statRaisedValue: "Beta",
     statBusinessesValue: "6",
-    statInvestorsValue: "Open",
+    statInvestorsValue: "Öppen",
     statFillRateValue: "PT · ES",
-    statsNote: "Illustrative early-access metrics — not audited traction.",
+    statsNote: "Illustrativa early access-siffror — inte granskad tillväxt. Gå med i grundarkretsen för att forma marknadsplatsen.",
     liveOpportunities: "Live-möjligheter",
     featuredTitle: "Utvalda företag",
     viewAll: "Visa alla",
@@ -65,9 +68,9 @@ export const sv: TranslationDict = {
     step2Title: "Investerare kopplar ihop",
     step2Body:
       "Bläddra bland granskade möjligheter efter kategori, plats och investeringstyp – och kontakta sedan.",
-    step3Title: "Kapital utplacerat",
+    step3Title: "Anslut direkt",
     step3Body:
-      "Kom överens om villkor och finansiera tillväxten. Följ milstolpar och uppdateringar från din översikt.",
+      "Meddela varandra, dela privata uppgifter när ni är redo och ta varje affär offline. Brickfund står utanför transaktionen.",
     investorBadge: "För investerare",
     investorTitle: "Bygg en portfölj av riktiga lokala företag",
     investorBody:
@@ -305,11 +308,11 @@ export const sv: TranslationDict = {
     privateDeckUrl: "Pitch deck URL",
     },
   legal: {
-    termsTitle: "Terms of use",
-    privacyTitle: "Privacy policy",
-    riskTitle: "Risk disclosure",
-    lastUpdated: "Last updated: July 2026",
-    counselNote: "This summary is not legal advice. Counsel review required before taking live capital.",
+    termsTitle: "Användarvillkor",
+    privacyTitle: "Integritetspolicy",
+    riskTitle: "Riskupplysning",
+    lastUpdated: "Senast uppdaterad: juli 2026",
+    counselNote: "Denna sammanfattning är inte juridisk rådgivning. Juridisk granskning krävs innan ni tar in riktigt kapital.",
     termsS1: "Brickfund är en upptäcksplattform. Vi hjälper lokala företag att presentera finansieringsmöjligheter och investerare att hitta dem. Det är allt vi gör.",
     termsS2: "Brickfund är ingen mellanhands, depositionssagent, betalningsförmedlare eller affärsförmedlare. Vi inte:",
     termsS2Bullet1: "Behandlar betalningar eller innehar medel.",
