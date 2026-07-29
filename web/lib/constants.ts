@@ -29,6 +29,10 @@ export const INVESTMENT_TYPE_STYLES: Record<
     pill: "bg-rose-50 text-rose-700 ring-rose-200",
     dot: "bg-rose-500",
   },
+  trespasse: {
+    pill: "bg-orange-50 text-orange-800 ring-orange-200",
+    dot: "bg-orange-500",
+  },
 };
 
 export const CATEGORIES: Record<Category, { emoji: string }> = {

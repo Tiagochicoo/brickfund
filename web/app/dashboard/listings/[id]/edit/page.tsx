@@ -11,7 +11,7 @@ import { Button, ErrorNote, Input, Label } from "@/components/ui";
 import LocationSelect from "@/components/LocationSelect";
 import type { Business, InvestmentType, Category, ListingStatus } from "@/lib/types";
 
-const TYPES: InvestmentType[] = ["seed", "growth", "loan", "equity", "revenue_share", "convertible_note"];
+const TYPES: InvestmentType[] = ["seed", "growth", "loan", "equity", "revenue_share", "convertible_note", "trespasse"];
 const CATS: Category[] = ["restaurant", "barber", "gym", "cafe", "retail", "salon", "bakery", "bar", "other"];
 
 export default function EditListingPage() {
