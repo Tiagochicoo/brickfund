@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n";
 
 export default function Logo({
   className = "",
@@ -9,6 +12,7 @@ export default function Logo({
   light?: boolean;
   asLink?: boolean;
 }) {
+  const { t } = useI18n();
   const text = light ? "text-white" : "text-brand-900";
   const logoContent = (
     <>
@@ -42,7 +46,7 @@ export default function Logo({
     <Link
       href="/"
       className={`group inline-flex items-center gap-2 ${className}`}
-      aria-label="Brickfund home"
+      aria-label={t.nav.homeAria}
     >
       {logoContent}
     </Link>

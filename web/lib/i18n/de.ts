@@ -16,6 +16,8 @@ export const de: TranslationDict = {
     dashboard: "Dashboard",
     signOut: "Abmelden",
     toggleMenu: "Menü umschalten",
+    changeLanguage: "Sprache ändern",
+    homeAria: "Brickfund Startseite",
   },
   footer: {
     tagline:
@@ -34,6 +36,7 @@ export const de: TranslationDict = {
     terms: "AGB",
     privacy: "Datenschutz",
     risk: "Risikohinweis",
+    copyright: "© 2026 Brickfund. Alle Rechte vorbehalten.",
   },
   home: {
     badge: "Hauptstraße trifft Risikokapital",
@@ -48,9 +51,9 @@ export const de: TranslationDict = {
     statFillRate: "Durchschnittliche Auslastung",
     statRaisedValue: "Beta",
     statBusinessesValue: "6",
-    statInvestorsValue: "Open",
+    statInvestorsValue: "Offen",
     statFillRateValue: "PT · ES",
-    statsNote: "Illustrative early-access metrics — not audited traction.",
+    statsNote: "Illustrative Early-Access-Kennzahlen — keine geprüfte Traktion. Treten Sie dem Gründerkreis bei, um den Marktplatz mitzugestalten.",
     liveOpportunities: "Live-Möglichkeiten",
     featuredTitle: "Vorgestellte Unternehmen",
     viewAll: "Alle anzeigen",
@@ -65,9 +68,9 @@ export const de: TranslationDict = {
     step2Title: "Investoren verbinden",
     step2Body:
       "Durchsuchen Sie geprüfte Möglichkeiten nach Kategorie, Standort und Investmenttyp – und wenden Sie sich dann.",
-    step3Title: "Kapital eingesetzt",
+    step3Title: "Direkt verbinden",
     step3Body:
-      "Einigen Sie sich auf Konditionen und finanzieren Sie das Wachstum. Verfolgen Sie Meilensteine und Updates aus Ihrem Dashboard.",
+      "Schreibt euch, teilt private Details, wenn ihr bereit seid, und schließt jedes Geschäft offline ab. Brickfund bleibt außerhalb der Transaktion.",
     investorBadge: "Für Investoren",
     investorTitle: "Bauen Sie ein Portfolio echter lokaler Unternehmen auf",
     investorBody:
@@ -305,11 +308,11 @@ export const de: TranslationDict = {
     privateDeckUrl: "Pitch deck URL",
     },
   legal: {
-    termsTitle: "Terms of use",
-    privacyTitle: "Privacy policy",
-    riskTitle: "Risk disclosure",
-    lastUpdated: "Last updated: July 2026",
-    counselNote: "This summary is not legal advice. Counsel review required before taking live capital.",
+    termsTitle: "Nutzungsbedingungen",
+    privacyTitle: "Datenschutzrichtlinie",
+    riskTitle: "Risikohinweis",
+    lastUpdated: "Zuletzt aktualisiert: Juli 2026",
+    counselNote: "Diese Zusammenfassung ist keine Rechtsberatung. Vor der Aufnahme von echtem Kapital ist eine anwaltliche Prüfung erforderlich.",
     termsS1: "Brickfund ist eine Entdeckungsplattform. Wir helfen lokalen Unternehmen, Finanzierungsmöglichkeiten zu präsentieren, und Anlegern, diese zu finden. Das ist alles, was wir tun.",
     termsS2: "Brickfund ist kein Vermittler, Treuhandagent, Zahlungsabwickler oder Vertragsvermittler. Wir nicht:",
     termsS2Bullet1: "Zahlungen abwickeln oder Gelder verwalten.",

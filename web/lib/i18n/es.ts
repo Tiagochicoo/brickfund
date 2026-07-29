@@ -16,6 +16,8 @@ export const es: TranslationDict = {
     dashboard: "Panel",
     signOut: "Cerrar sesión",
     toggleMenu: "Abrir menú",
+    changeLanguage: "Cambiar idioma",
+    homeAria: "Inicio de Brickfund",
   },
   footer: {
     tagline:
@@ -30,10 +32,11 @@ export const es: TranslationDict = {
     contact: "Contacto",
     rights: "Todos los derechos reservados.",
     crafted: "Hecho para el comercio de barrio.",
-    legal: "Legal",
+    legal: "Aviso legal",
     terms: "Términos",
     privacy: "Privacidad",
     risk: "Divulgación de riesgos",
+    copyright: "© 2026 Brickfund. Todos los derechos reservados.",
   },
   home: {
     badge: "El comercio local se encuentra con el capital riesgo",
@@ -48,9 +51,9 @@ export const es: TranslationDict = {
     statFillRate: "Tasa media de cobertura",
     statRaisedValue: "Beta",
     statBusinessesValue: "6",
-    statInvestorsValue: "Open",
+    statInvestorsValue: "Abierto",
     statFillRateValue: "PT · ES",
-    statsNote: "Illustrative early-access metrics — not audited traction.",
+    statsNote: "Métricas ilustrativas de acceso anticipado: no son tracción auditada. Únete al círculo fundador para dar forma al marketplace.",
     liveOpportunities: "Oportunidades activas",
     featuredTitle: "Negocios destacados",
     viewAll: "Ver todo",
@@ -65,9 +68,9 @@ export const es: TranslationDict = {
     step2Title: "Los inversores conectan",
     step2Body:
       "Explora oportunidades verificadas por categoría, ubicación y tipo de inversión — luego contacta.",
-    step3Title: "Capital desplegado",
+    step3Title: "Conectad directamente",
     step3Body:
-      "Acuerda los términos y financia el crecimiento. Sigue los hitos y actualizaciones desde tu panel.",
+      "Mensajeaos, compartid detalles privados cuando estéis listos y cerrad cualquier acuerdo fuera de la plataforma. Brickfund no interviene en la transacción.",
     investorBadge: "Para inversores",
     investorTitle: "Construye una cartera de negocios reales y locales",
     investorBody:
@@ -304,11 +307,11 @@ export const es: TranslationDict = {
     privateDeckUrl: "Pitch deck URL",
     },
   legal: {
-    termsTitle: "Terms of use",
-    privacyTitle: "Privacy policy",
-    riskTitle: "Risk disclosure",
-    lastUpdated: "Last updated: July 2026",
-    counselNote: "This summary is not legal advice. Counsel review required before taking live capital.",
+    termsTitle: "Términos de uso",
+    privacyTitle: "Política de privacidad",
+    riskTitle: "Divulgación de riesgos",
+    lastUpdated: "Última actualización: julio de 2026",
+    counselNote: "Este resumen no es asesoramiento legal. Se requiere revisión por un abogado antes de captar capital real.",
     termsS1: "Brickfund es una plataforma de descubrimiento. Ayudamos a las empresas locales a presentar oportunidades de financiación y a los inversores a encontrarlas. Eso es todo lo que hacemos.",
     termsS2: "Brickfund no es intermediario, agente de depósito de garantía, procesador de pagamentos ni facilitador de acuerdos. No:",
     termsS2Bullet1: "Procesamos pagamentos ni retenemos fondos.",

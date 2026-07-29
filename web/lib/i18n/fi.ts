@@ -16,6 +16,8 @@ export const fi: TranslationDict = {
     dashboard: "Hallintapaneeli",
     signOut: "Kirjaudu ulos",
     toggleMenu: "Vaihda valikko",
+    changeLanguage: "Vaihda kieli",
+    homeAria: "Brickfund etusivu",
   },
   footer: {
     tagline:
@@ -34,6 +36,7 @@ export const fi: TranslationDict = {
     terms: "Ehdot",
     privacy: "Tietosuoja",
     risk: "Riskihuomautus",
+    copyright: "© 2026 Brickfund. Kaikki oikeudet pidätetään.",
   },
   home: {
     badge: "Pääkatu kohtaa pääoman",
@@ -48,9 +51,9 @@ export const fi: TranslationDict = {
     statFillRate: "Keskimääräinen täyttöaste",
     statRaisedValue: "Beta",
     statBusinessesValue: "6",
-    statInvestorsValue: "Open",
+    statInvestorsValue: "Avoin",
     statFillRateValue: "PT · ES",
-    statsNote: "Illustrative early-access metrics — not audited traction.",
+    statsNote: "Havainnollistavia early access -mittareita — ei tilintarkastettua kasvua. Liity perustajapiiriin muokkaamaan markkinapaikkaa.",
     liveOpportunities: "Live-mahdollisuudet",
     featuredTitle: "Esitellyt yritykset",
     viewAll: "Näytä kaikki",
@@ -65,9 +68,9 @@ export const fi: TranslationDict = {
     step2Title: "Sijoittajat yhdistyvät",
     step2Body:
       "Selaa tarkistettuja mahdollisuuksia kategorian, sijainnin ja sijoitustyypin mukaan – ja ota sitten yhteyttä.",
-    step3Title: "Pääoma sijoitettu",
+    step3Title: "Yhdistäkää suoraan",
     step3Body:
-      "Sovikaa ehdoista ja rahoittakaa kasvu. Seuraa virstanpylväitä ja päivityksiä hallintapaneelista.",
+      "Viestitelkää, jakakaa yksityisiä tietoja kun olette valmiita, ja hoitakaa kaupat alustan ulkopuolella. Brickfund pysyy poissa transaktiosta.",
     investorBadge: "Sijoittajille",
     investorTitle: "Rakenna todellisten paikallisten yritysten portfoliosijoitus",
     investorBody:
@@ -305,11 +308,11 @@ export const fi: TranslationDict = {
     privateDeckUrl: "Pitch deck URL",
     },
   legal: {
-    termsTitle: "Terms of use",
-    privacyTitle: "Privacy policy",
-    riskTitle: "Risk disclosure",
-    lastUpdated: "Last updated: July 2026",
-    counselNote: "This summary is not legal advice. Counsel review required before taking live capital.",
+    termsTitle: "Käyttöehdot",
+    privacyTitle: "Tietosuojakäytäntö",
+    riskTitle: "Riskihuomautus",
+    lastUpdated: "Viimeksi päivitetty: heinäkuu 2026",
+    counselNote: "Tämä yhteenveto ei ole oikeudellista neuvontaa. Asianajajan tarkastus vaaditaan ennen todellisen pääoman keräämistä.",
     termsS1: "Brickfund on löytöalusta. Autamme paikallisia yrityksiä esittelemään rahoitusmahdollisuuksia ja sijoittajia löytämään ne. Se on kaikki mitä teemme.",
     termsS2: "Brickfund ei ole välittäjä, panttivaltuutettu, maksunkäsittelijä tai kaupan välittäjä. Me emme:",
     termsS2Bullet1: "Käsittele maksuja tai pidä varoja.",

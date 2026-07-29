@@ -3,12 +3,14 @@ export type TranslationDict = {
   nav: {
     explore: string; deals: string; howItWorks: string; forInvestors: string; signIn: string;
     getStarted: string; dashboard: string; signOut: string; toggleMenu: string;
+    changeLanguage: string; homeAria: string;
   };
   footer: {
     tagline: string; platform: string; exploreBusinesses: string; raiseCapital: string;
     becomeInvestor: string; company: string; howItWorks: string; signIn: string;
     contact: string; rights: string; crafted: string;
     legal: string; terms: string; privacy: string; risk: string;
+    copyright: string;
   };
   home: {
     badge: string; heroTitle: string; heroSubtitle: string; exploreOpportunities: string;
@@ -142,6 +144,8 @@ export const en: TranslationDict = {
     dashboard: "Dashboard",
     signOut: "Sign out",
     toggleMenu: "Toggle menu",
+    changeLanguage: "Change language",
+    homeAria: "Brickfund home",
   },
   footer: {
     tagline:
@@ -160,6 +164,7 @@ export const en: TranslationDict = {
     terms: "Terms",
     privacy: "Privacy",
     risk: "Risk disclosure",
+    copyright: "© 2026 Brickfund. All rights reserved.",
   },
   home: {
     badge: "Main street meets venture capital",
@@ -193,7 +198,7 @@ export const en: TranslationDict = {
       "Browse vetted opportunities by category, location, and investment type — then reach out.",
     step3Title: "Connect directly",
     step3Body:
-      "Express interest, unlock private information, and connect directly. No middleman.",
+      "Message each other, share private details when ready, and take any deal offline. Brickfund stays out of the transaction.",
     investorBadge: "For investors",
     investorTitle: "Build a portfolio of real, local businesses",
     investorBody:

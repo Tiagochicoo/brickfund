@@ -6,7 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { LOCALES } from "@/lib/i18n/locales";
 
 export default function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
-  const { locale, setLocale } = useI18n();
+  const { locale, setLocale, t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const current = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
@@ -25,7 +25,7 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-cream-100 hover:text-brand-800"
-        aria-label="Change language"
+        aria-label={t.nav.changeLanguage}
         aria-expanded={open}
       >
         <Globe className="h-4 w-4" />
