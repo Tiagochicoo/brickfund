@@ -185,7 +185,7 @@ export const en: TranslationDict = {
     step2Title: "Investors connect",
     step2Body:
       "Browse vetted opportunities by category, location, and investment type — then reach out.",
-    step3Title: "Capital deployed",
+    step3Title: "Connect directly",
     step3Body:
       "Express interest, unlock private information, and connect directly. No middleman.",
     investorBadge: "For investors",

@@ -223,7 +223,7 @@ export default function BusinessDetailPage() {
             </dl>
 
             {user?.role === "investor" && !isOwner ? (
-              <InterestButton businessId={business.id} />
+              <InterestButton businessId={business.id} businessOwner={business.owner} />
             ) : !user ? (
               <Link href="/register" className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-brand-700 px-4 py-3 text-sm font-semibold text-white shadow-soft transition-all hover:bg-brand-800">
                 {t.businessDetail.expressInterest}

@@ -6,11 +6,12 @@ import Link from "next/link";
 import { Heart, Loader2, MessageSquare, X } from "lucide-react";
 import { Button } from "@/components/ui";
 import { expressInterest, checkInterest } from "@/lib/api";
+import { getPb } from "@/lib/pb";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
 import type { Interest } from "@/lib/types";
 
-export function InterestButton({ businessId }: { businessId: string }) {
+export function InterestButton({ businessId, businessOwner }: { businessId: string; businessOwner?: string }) {
   const { user } = useAuth();
   const { t } = useI18n();
   const router = useRouter();
@@ -42,10 +43,30 @@ export function InterestButton({ businessId }: { businessId: string }) {
     e.preventDefault();
     setBusy(true);
     try {
-      await expressInterest({ businessId, message, ticketSize });
+      const created = await expressInterest({ businessId, message, ticketSize });
+      setExisting(created);
       setDone(true);
-      setBusy(false);
+
+      // Create in-app notification for the business owner
+      if (businessOwner) {
+        try {
+          const pb = getPb();
+          await pb.collection("notifications").create({
+            recipient: businessOwner,
+            type: "interest_received",
+            title: `${user?.name ?? "An investor"} is interested in your business`,
+            body: message || `${user?.name ?? "Someone"} expressed interest.`,
+            link: `/dashboard/messages/${created.id}`,
+            read: false,
+            actor: user?.id ?? "",
+          });
+        } catch {
+          /* best effort */
+        }
+      }
     } catch {
+      /* ignore */
+    } finally {
       setBusy(false);
     }
   }
