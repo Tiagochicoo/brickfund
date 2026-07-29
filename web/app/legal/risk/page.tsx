@@ -8,23 +8,26 @@ export default function RiskPage() {
   return (
     <LegalShell title={t.legal.riskTitle}>
       <p>
-        <strong>Capital at risk.</strong> Investing in private businesses can result in partial or total
-        loss of capital. Returns are not guaranteed. Past performance (including demo or illustrative
-        figures on the site) is not indicative of future results.
+        <strong>Capital at risk.</strong> Investing in private businesses can result
+        in partial or total loss of capital. Returns are not guaranteed. Past
+        performance is not indicative of future results.
       </p>
       <p>
-        Instruments may include loans, equity, revenue share, or convertible notes. Each carries different
-        legal, tax, and liquidity characteristics. Some offerings may only be available to professional or
-        sophisticated investors under local securities law.
+        Investment types may include loans, equity, revenue share, or convertible
+        notes. Each carries different legal, tax, and liquidity characteristics.
+        Some offerings may only be available to professional or sophisticated
+        investors under local securities law.
       </p>
       <p>
-        Brickfund is a technology marketplace. Unless explicitly stated in a regulated prospectus or license
-        disclosure, Brickfund is not a bank, broker-dealer, or collective investment scheme. Independent legal,
-        tax, and financial advice is recommended before committing funds.
+        <strong>Brickfund is a discovery platform only.</strong> We are not a bank,
+        broker-dealer, or collective investment scheme. We do not verify the
+        financial claims made by businesses on this platform. All information
+        shared by businesses is their sole responsibility.
       </p>
       <p>
-        Escrow reduces certain settlement risks but does not eliminate business failure, fraud, operational,
-        currency, or counterparty risk after release of funds.
+        Independent legal, tax, and financial advice is strongly recommended before
+        making any investment. You deal directly with the other party at your own
+        risk. Brickfund accepts no responsibility for any outcome.
       </p>
     </LegalShell>
   );

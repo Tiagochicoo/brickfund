@@ -7,22 +7,36 @@ export default function PrivacyPage() {
   const { t } = useI18n();
   return (
     <LegalShell title={t.legal.privacyTitle}>
+      <h2>1. What we collect</h2>
       <p>
-        We process account data (name, email, role, location), listing content you submit, and technical
-        logs needed to run the service. Payment data is handled by Stripe; we do not store full card numbers.
+        We collect your name, email address, role (business or investor), location,
+        and any content you submit to your profile or listings.
       </p>
+      <h2>2. How we use your data</h2>
       <p>
-        Legal bases typically include contract performance (providing the marketplace), legitimate interests
-        (security, product improvement), and consent where required (marketing emails).
+        We use your data to provide the discovery platform. This includes showing your
+        listing to investors, enabling interest notifications, and allowing private
+        messaging between users who have connected.
       </p>
+      <h2>3. What we do not do</h2>
       <p>
-        You may request access, correction, or deletion of personal data subject to legal retention needs
-        (e.g. completed transaction records). Contact the operator to exercise rights under GDPR/UK GDPR
-        where applicable.
+        We do not process payments. We do not store payment card numbers. We do not
+        share your data with third parties for marketing purposes.
       </p>
+      <h2>4. Legal basis</h2>
       <p>
-        Cookies / local storage may be used for authentication and language preference. Browser extensions
-        may inject additional data client-side; that is outside our control.
+        We process data based on contract performance (providing the platform),
+        legitimate interests (security and improvement), and consent where required.
+      </p>
+      <h2>5. Your rights</h2>
+      <p>
+        You may request access, correction, or deletion of your personal data.
+        Contact the operator to exercise your rights under GDPR or applicable law.
+      </p>
+      <h2>6. Cookies</h2>
+      <p>
+        We use cookies and local storage for authentication and language preference
+        only. We do not use tracking cookies.
       </p>
     </LegalShell>
   );

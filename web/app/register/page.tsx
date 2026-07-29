@@ -202,7 +202,14 @@ export default function RegisterPage() {
           <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)}
             className="mt-0.5 h-4 w-4 rounded border-cream-200 accent-brand-600" />
           <span className="text-sm text-ink/70">
-            {t.auth.termsAcceptLabel}
+            {t.auth.termsAcceptLabel}{" "}
+            <Link href="/legal/terms" target="_blank" className="font-semibold text-brand-700 underline">
+              {t.footer.terms}
+            </Link>{" "}
+            {"and"}{" "}
+            <Link href="/legal/privacy" target="_blank" className="font-semibold text-brand-700 underline">
+              {t.footer.privacy}
+            </Link>
           </span>
         </label>
 
