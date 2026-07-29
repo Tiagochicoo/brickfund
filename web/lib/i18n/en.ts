@@ -63,7 +63,7 @@ export type TranslationDict = {
     roleInvestorSub: string; yourName: string; fullName: string; businessName: string;
     phone: string; country: string; countryPlaceholder: string; city: string;
     cityPlaceholder: string; cityManualPlaceholder: string; citySelectFirst: string;
-    loadingLocations: string; investorType: string; individualInvestor: string;
+    loadingLocations: string; citySelectFromList: string; cityNoMatches: string; investorType: string; individualInvestor: string;
     investmentFirm: string; fundFamilyOffice: string; firmName: string; firmNameOptional: string;
     minBudget: string; maxBudget: string; accredited: string; location: string;
     passwordMin: string; passwordConfirm: string; passwordRepeat: string;
@@ -105,6 +105,12 @@ export type TranslationDict = {
     statusPaused: string; statusClosed: string;
     privateSection: string; privateSectionHint: string;
     privateDescription: string; privateFinancials: string; privateDeckUrl: string;
+    images: string; imagesHint: string; imagesAdd: string; imagesRemove: string;
+    imagesMax: string; imagesType: string; imagesSize: string;
+    investmentTypeHint: string; cityRequired: string;
+    useOfFundsPreset_seed: string; useOfFundsPreset_growth: string; useOfFundsPreset_loan: string;
+    useOfFundsPreset_equity: string; useOfFundsPreset_revenue_share: string;
+    useOfFundsPreset_convertible_note: string; useOfFundsPreset_trespasse: string;
   };
   legal: {
     termsTitle: string; privacyTitle: string; riskTitle: string; lastUpdated: string; counselNote: string;
@@ -339,6 +345,8 @@ export const en: TranslationDict = {
     cityManualPlaceholder: "Enter your city",
     citySelectFirst: "Select a country first",
     loadingLocations: "Loading locations…",
+    citySelectFromList: "Please select a city from the list.",
+    cityNoMatches: "No cities match your search.",
     investorType: "Investor type",
     individualInvestor: "Individual investor",
     investmentFirm: "Investment firm",
@@ -470,6 +478,22 @@ export const en: TranslationDict = {
     privateDescription: "Private description",
     privateFinancials: "Financial details",
     privateDeckUrl: "Pitch deck URL",
+    images: "Photos",
+    imagesHint: "Add up to 6 photos of the premises, products, or team. First photo is the cover.",
+    imagesAdd: "Add photo",
+    imagesRemove: "Remove photo",
+    imagesMax: "You can upload up to {n} photos.",
+    imagesType: "Please choose an image file (JPG, PNG, WebP, or GIF).",
+    imagesSize: "Each photo must be under 5 MB.",
+    investmentTypeHint: "Pick the structure that best matches what you are offering. Tap a card to read a short explanation.",
+    cityRequired: "Select a city from the list.",
+    useOfFundsPreset_seed: "Launch costs — fit-out, equipment, initial stock, licenses, and 3–6 months of working capital.\n\nExample:\n• Fit-out & furniture: €…\n• Kitchen / tools: €…\n• Opening stock: €…\n• Working capital: €…",
+    useOfFundsPreset_growth: "Expansion plan — new space, capacity, equipment upgrades, marketing, and hiring.\n\nExample:\n• New terrace / second unit: €…\n• Equipment upgrade: €…\n• Marketing to fill seats: €…\n• Extra staff (first months): €…",
+    useOfFundsPreset_loan: "What the loan funds and how you expect to repay it (from sales cash flow).\n\nExample:\n• Renovation / equipment: €…\n• Inventory bridge: €…\n• Repayment from monthly sales over … months",
+    useOfFundsPreset_equity: "What the capital builds and what ownership conversation you want offline.\n\nExample:\n• Growth project: €…\n• Team / operations: €…\n• Target stake range you are open to discuss: …%",
+    useOfFundsPreset_revenue_share: "Project funded by capital and the revenue base that can support a share for investors.\n\nExample:\n• Project / build-out: €…\n• Revenue share idea (discuss offline): ~…% of monthly sales for … months",
+    useOfFundsPreset_convertible_note: "Bridge use of funds before a later equity conversation offline.\n\nExample:\n• Runway / operations: €…\n• Milestone this bridge unlocks: …\n• Intended conversion discussion after: …",
+    useOfFundsPreset_trespasse: "What is included in the trespasse / total buyout and the main price components.\n\nExample:\n• Premises rights / key money: €…\n• Equipment & fittings: €…\n• Stock at handover: €…\n• Brand, contracts, staff transfer notes: …\n• Preferred handover timing: …",
   },
   legal: {
     termsTitle: "Terms of use",
@@ -521,13 +545,13 @@ export const en: TranslationDict = {
     revenue_share: "Revenue Share",
     convertible_note: "Convertible Note",
     trespasse: "Total buyout",
-    seedBlurb: "Early-stage capital to launch.",
-    growthBlurb: "Funds to expand an existing business.",
-    loanBlurb: "Debt financing repaid over time.",
-    equityBlurb: "Ownership stake in exchange for capital.",
-    revenue_shareBlurb: "Investors earn a % of monthly revenue.",
-    convertible_noteBlurb: "Debt that converts to equity later.",
-    trespasseBlurb: "Full purchase of the business as a going concern (trespasse).",
+    seedBlurb: "Early capital to open or launch. Investors back the start-up phase before the business is fully proven.",
+    growthBlurb: "Capital to expand an existing, trading business — new location, capacity, or product line.",
+    loanBlurb: "Debt that is repaid over time from cash flow. No ownership transfer by default.",
+    equityBlurb: "Investors take an ownership stake in exchange for capital. Terms are agreed directly offline.",
+    revenue_shareBlurb: "Investors receive a percentage of revenue for a period, instead of (or alongside) equity.",
+    convertible_noteBlurb: "Short-term funding that can convert into equity later, on terms you negotiate offline.",
+    trespasseBlurb: "Full sale of the business as a going concern (trespasse): premises, equipment, stock, and operations.",
   },
   categories: {
     restaurant: "Restaurant",

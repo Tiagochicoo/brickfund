@@ -28,6 +28,7 @@ export default function LocationSelect({
   const [error, setError] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
   const [cityQuery, setCityQuery] = useState("");
+  const [cityError, setCityError] = useState<string | null>(null);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -50,6 +51,11 @@ export default function LocationSelect({
       });
   }, []);
 
+  // Keep query in sync when city is set externally (e.g. edit form load)
+  useEffect(() => {
+    if (!cityOpen) setCityQuery(city);
+  }, [city, cityOpen]);
+
   const sortedCountries = useMemo(
     () => [...countries].sort((a, b) => a.country.localeCompare(b.country)),
     [countries]
@@ -61,7 +67,7 @@ export default function LocationSelect({
   }, [countries, country]);
 
   const filteredCities = useMemo(() => {
-    const q = cityQuery.toLowerCase();
+    const q = cityQuery.toLowerCase().trim();
     if (!q) return currentCities.slice(0, 200);
     return currentCities
       .filter((c) => c.toLowerCase().includes(q))
@@ -72,6 +78,14 @@ export default function LocationSelect({
     onCountryChange(value);
     onCityChange("");
     setCityQuery("");
+    setCityError(null);
+  }
+
+  function selectCity(c: string) {
+    onCityChange(c);
+    setCityQuery(c);
+    setCityOpen(false);
+    setCityError(null);
   }
 
   function openCityDropdown() {
@@ -84,7 +98,26 @@ export default function LocationSelect({
   }
 
   function scheduleClose() {
-    blurTimer.current = setTimeout(() => setCityOpen(false), 150);
+    blurTimer.current = setTimeout(() => {
+      setCityOpen(false);
+      // Only keep a city that exists in the dropdown list
+      const match = currentCities.find(
+        (c) => c.toLowerCase() === cityQuery.trim().toLowerCase()
+      );
+      if (match) {
+        onCityChange(match);
+        setCityQuery(match);
+        setCityError(null);
+      } else {
+        // Revert to last valid selection (or empty)
+        setCityQuery(city);
+        if (cityQuery.trim() && !city) {
+          setCityError(t.auth.citySelectFromList);
+        } else if (cityQuery.trim() && city && cityQuery.trim() !== city) {
+          setCityError(t.auth.citySelectFromList);
+        }
+      }
+    }, 150);
   }
 
   if (loading) {
@@ -98,7 +131,6 @@ export default function LocationSelect({
 
   return (
     <div className="space-y-3">
-      {/* Country */}
       <div>
         <Label htmlFor="country">
           {t.auth.country}
@@ -115,9 +147,7 @@ export default function LocationSelect({
               country ? "text-ink" : "text-ink/40"
             }`}
           >
-            <option value="">
-              {error ? t.auth.countryPlaceholder : t.auth.countryPlaceholder}
-            </option>
+            <option value="">{t.auth.countryPlaceholder}</option>
             {sortedCountries.map((c) => (
               <option key={c.country} value={c.country}>
                 {c.country}
@@ -128,7 +158,6 @@ export default function LocationSelect({
         </div>
       </div>
 
-      {/* City */}
       <div>
         <Label htmlFor="city">
           {t.auth.city}
@@ -143,45 +172,48 @@ export default function LocationSelect({
               value={cityOpen ? cityQuery : city}
               placeholder={t.auth.cityPlaceholder}
               onChange={(e) => {
+                // Filter only — do not commit free text as city value
                 setCityQuery(e.target.value);
-                onCityChange(e.target.value);
                 setCityOpen(true);
+                setCityError(null);
               }}
               onFocus={openCityDropdown}
               onBlur={scheduleClose}
               autoComplete="off"
-              className="w-full rounded-xl border border-cream-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition-all placeholder:text-ink/35 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20"
+              className={`w-full rounded-xl border bg-white py-2.5 pl-9 pr-4 text-sm outline-none transition-all placeholder:text-ink/35 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 ${
+                cityError ? "border-rose-300" : "border-cream-200"
+              }`}
             />
-            {cityOpen && filteredCities.length > 0 && (
+            {/* Hidden input enforces required selected value for form validity */}
+            <input type="hidden" required={required} value={city} readOnly />
+            {cityOpen && (
               <ul className="absolute z-30 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-cream-200 bg-white py-1 shadow-card">
-                {filteredCities.map((c) => (
-                  <li key={c}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onCityChange(c);
-                        setCityQuery(c);
-                        setCityOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-ink/75 transition-colors hover:bg-brand-50 hover:text-brand-800"
-                    >
-                      {c}
-                    </button>
-                  </li>
-                ))}
+                {filteredCities.length > 0 ? (
+                  filteredCities.map((c) => (
+                    <li key={c}>
+                      <button
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => selectCity(c)}
+                        className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-brand-50 hover:text-brand-800 ${
+                          c === city ? "bg-brand-50 font-medium text-brand-800" : "text-ink/75"
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <li className="px-4 py-3 text-sm text-ink/45">{t.auth.cityNoMatches}</li>
+                )}
               </ul>
             )}
+            {cityError && <p className="mt-1 text-xs text-rose-600">{cityError}</p>}
           </div>
         ) : (
-          <input
-            id="city"
-            required={required}
-            value={city}
-            onChange={(e) => onCityChange(e.target.value)}
-            placeholder={country ? t.auth.cityManualPlaceholder : t.auth.citySelectFirst}
-            disabled={!country}
-            className="w-full rounded-xl border border-cream-200 bg-white py-2.5 px-4 text-sm outline-none transition-all placeholder:text-ink/35 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 disabled:opacity-50"
-          />
+          <p className="rounded-xl border border-cream-200 bg-cream-50 px-4 py-2.5 text-sm text-ink/45">
+            {country ? (error ? t.auth.citySelectFromList : t.auth.citySelectFirst) : t.auth.citySelectFirst}
+          </p>
         )}
       </div>
     </div>

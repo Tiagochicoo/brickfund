@@ -75,7 +75,7 @@ export interface Business extends BaseRecord {
   vetted?: boolean;
   featured?: boolean;
   published: boolean;
-  image?: string;
+  image?: string | string[];
   expand?: { owner?: User };
 }
 
