@@ -31,9 +31,9 @@ export const pt: TranslationDict = {
     rights: "Todos os direitos reservados.",
     crafted: "Feito para o comércio de rua.",
     legal: "Legal",
-    terms: "Terms",
-    privacy: "Privacy",
-    risk: "Risk disclosure",
+    terms: "Termos",
+    privacy: "Privacidade",
+    risk: "Divulgação de riscos",
   },
   home: {
     badge: "O comércio de rua encontra capital de risco",

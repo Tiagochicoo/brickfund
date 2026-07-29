@@ -31,9 +31,9 @@ export const es: TranslationDict = {
     rights: "Todos los derechos reservados.",
     crafted: "Hecho para el comercio de barrio.",
     legal: "Legal",
-    terms: "Terms",
-    privacy: "Privacy",
-    risk: "Risk disclosure",
+    terms: "Términos",
+    privacy: "Privacidad",
+    risk: "Divulgación de riesgos",
   },
   home: {
     badge: "El comercio local se encuentra con el capital riesgo",
