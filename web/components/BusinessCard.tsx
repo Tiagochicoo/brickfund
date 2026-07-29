@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin } from "lucide-react";
+import { MapPin, BadgeCheck } from "lucide-react";
 import type { Business } from "@/lib/types";
 import { PB_URL } from "@/lib/types";
-import { formatCurrency, pct } from "@/lib/constants";
 import InvestmentPill from "./InvestmentPill";
 import { useI18n } from "@/lib/i18n";
 
@@ -24,8 +23,6 @@ const UNSPLASH_IMAGES: Record<string, string> = {
 export default function BusinessCard({ business }: { business: Business }) {
   const { t } = useI18n();
   const catLabel = t.categories[business.category];
-  const percent = pct(business.fundingRaised, business.fundingGoal);
-  const funded = percent >= 100;
   const hasImage = business.image && business.image.length > 0;
   const imageUrl = hasImage
     ? `${PB_URL}/api/files/businesses/${business.id}/${business.image}`
@@ -45,15 +42,16 @@ export default function BusinessCard({ business }: { business: Business }) {
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/50" />
-        
-        <div className="absolute left-3 top-3 z-10">
+
+        <div className="absolute left-3 top-3 z-10 flex gap-1.5">
           <InvestmentPill type={business.investmentType} size="sm" />
+          {business.vetted && (
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-semibold text-brand-700">
+              <BadgeCheck className="h-3 w-3" />
+              {t.businessDetail.vetted}
+            </span>
+          )}
         </div>
-        {funded && (
-          <span className="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-brand-700 ring-1 ring-white/60">
-            {t.businessDetail.fundedBadge}
-          </span>
-        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
@@ -73,25 +71,12 @@ export default function BusinessCard({ business }: { business: Business }) {
           {business.pitch}
         </p>
 
-        <div className="mt-auto">
-          <div className="mb-1.5 flex items-center justify-between text-xs">
-            <span className="font-semibold text-brand-800">
-              {formatCurrency(business.fundingRaised)}
-            </span>
-            <span className="text-ink/50">
-              {t.misc.of} {formatCurrency(business.fundingGoal)}
-            </span>
+        {business.capitalSought && (
+          <div className="mt-auto">
+            <p className="text-xs text-ink/50">{t.businessDetail.capitalSought}</p>
+            <p className="font-display text-sm font-semibold text-brand-800">{business.capitalSought}</p>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-cream-200">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700 transition-all"
-              style={{ width: `${percent}%` }}
-            />
-          </div>
-          <p className="mt-1.5 text-[11px] font-medium text-ink/45">
-            {percent}% {t.misc.raised}
-          </p>
-        </div>
+        )}
       </div>
     </Link>
   );

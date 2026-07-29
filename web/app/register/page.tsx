@@ -31,10 +31,8 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
 
   const [investorType, setInvestorType] = useState<"individual" | "firm" | "fund">("individual");
-  const [accredited, setAccredited] = useState(false);
-  const [budgetMin, setBudgetMin] = useState("");
-  const [budgetMax, setBudgetMax] = useState("");
   const [invCompany, setInvCompany] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const INVESTOR_TYPES = [
     { value: "individual" as const, label: t.auth.individualInvestor },
@@ -65,6 +63,10 @@ export default function RegisterPage() {
       setError(t.auth.passwordShort);
       return;
     }
+    if (!termsAccepted) {
+      setError(t.auth.termsAcceptRequired);
+      return;
+    }
     setBusy(true);
     try {
       const fullLocation = city && country ? `${city}, ${country}` : "";
@@ -79,15 +81,13 @@ export default function RegisterPage() {
         country: country.trim(),
       };
       if (role === "business") {
-        await register({ ...base, company: company.trim(), phone: phone.trim() });
+        await register({ ...base, company: company.trim(), phone: phone.trim(), termsAccepted });
       } else {
         await register({
           ...base,
           company: invCompany.trim(),
           investorType,
-          accredited,
-          budgetMin: budgetMin ? Number(budgetMin) : undefined,
-          budgetMax: budgetMax ? Number(budgetMax) : undefined,
+          termsAccepted,
         });
       }
       router.push("/dashboard");
@@ -175,20 +175,6 @@ export default function RegisterPage() {
               </Label>
               <Input id="invCompany" value={invCompany} onChange={(e) => setInvCompany(e.target.value)} placeholder="Whitfield Capital" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label htmlFor="budgetMin" hint="€">{t.auth.minBudget}</Label>
-                <Input id="budgetMin" type="number" min={0} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="25000" />
-              </div>
-              <div>
-                <Label htmlFor="budgetMax" hint="€">{t.auth.maxBudget}</Label>
-                <Input id="budgetMax" type="number" min={0} value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} placeholder="250000" />
-              </div>
-            </div>
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-white p-3.5">
-              <input type="checkbox" checked={accredited} onChange={(e) => setAccredited(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-cream-200 accent-brand-600" />
-              <span className="text-sm text-ink/70">{t.auth.accredited}</span>
-            </label>
           </>
         )}
 
@@ -211,6 +197,14 @@ export default function RegisterPage() {
         </div>
 
         <ErrorNote>{error}</ErrorNote>
+
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-3.5">
+          <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-cream-200 accent-brand-600" />
+          <span className="text-sm text-ink/70">
+            {t.auth.termsAcceptLabel}
+          </span>
+        </label>
 
         <Button type="submit" disabled={busy}>
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}

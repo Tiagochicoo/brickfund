@@ -1,5 +1,5 @@
 export const PB_URL =
-  process.env.NEXT_PUBLIC_PB_URL || "http://127.0.0.1:8090";
+  process.env.NEXT_PUBLIC_PB_URL || "http://127.0.0.1:8093";
 
 export type Role = "business" | "investor";
 
@@ -22,6 +22,10 @@ export type Category =
   | "bar"
   | "other";
 
+export type ListingStatus = "open" | "paused" | "closed";
+
+export type InterestStatus = "pending" | "accepted" | "declined" | "withdrawn";
+
 export interface BaseRecord {
   id: string;
   created: string;
@@ -36,9 +40,12 @@ export interface User extends BaseRecord {
   role: Role;
   company?: string;
   investorType?: "individual" | "firm" | "fund";
-  accredited?: boolean;
-  budgetMin?: number;
-  budgetMax?: number;
+  termsAccepted?: boolean;
+  termsVersion?: string;
+  ticketMin?: string;
+  ticketMax?: string;
+  bio?: string;
+  experience?: string;
   phone?: string;
   location?: string;
   city?: string;
@@ -56,9 +63,50 @@ export interface Business extends BaseRecord {
   country?: string;
   pitch: string;
   description?: string;
-  fundingGoal: number;
-  fundingRaised: number;
-  image?: string;
+  status: ListingStatus;
+  capitalSought?: string;
+  useOfFunds?: string;
+  revenueRange?: string;
+  // Private fields - only visible after interest
+  privateDescription?: string;
+  privateFinancials?: string;
+  privateDeckUrl?: string;
+  vetted?: boolean;
+  featured?: boolean;
   published: boolean;
+  image?: string;
   expand?: { owner?: User };
+}
+
+export interface Interest extends BaseRecord {
+  investor: string;
+  business: string;
+  status: InterestStatus;
+  message?: string;
+  ticketSize?: string;
+  expand?: {
+    investor?: User;
+    business?: Business;
+  };
+}
+
+export interface Message extends BaseRecord {
+  interest: string;
+  sender: string;
+  recipient: string;
+  body: string;
+  type: "text" | "document" | "financial" | "deck";
+  attachmentUrl?: string;
+  attachmentLabel?: string;
+  read?: boolean;
+  expand?: {
+    sender?: User;
+    recipient?: User;
+  };
+}
+
+export interface SavedBusiness extends BaseRecord {
+  investor: string;
+  business: string;
+  expand?: { business?: Business };
 }
