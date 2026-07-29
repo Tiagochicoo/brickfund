@@ -2,213 +2,192 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Lock } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
 import { getPb } from "@/lib/pb";
 import { Button, ErrorNote, Input, Label } from "@/components/ui";
-import type { Category, InvestmentType } from "@/lib/types";
-import { CATEGORIES, INVESTMENT_TYPE_STYLES } from "@/lib/constants";
+import LocationSelect from "@/components/LocationSelect";
+import type { Business, InvestmentType, Category, ListingStatus } from "@/lib/types";
 
-const CATEGORY_KEYS = Object.keys(CATEGORIES) as Category[];
-const TYPE_KEYS = Object.keys(INVESTMENT_TYPE_STYLES) as InvestmentType[];
+const TYPES: InvestmentType[] = ["seed", "growth", "loan", "equity", "revenue_share", "convertible_note"];
+const CATS: Category[] = ["restaurant", "barber", "gym", "cafe", "retail", "salon", "bakery", "bar", "other"];
 
 export default function NewListingPage() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const { t } = useI18n();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
-  const [category, setCategory] = useState<Category>("cafe");
+  const [category, setCategory] = useState<Category>("restaurant");
   const [investmentType, setInvestmentType] = useState<InvestmentType>("growth");
+  const [location, setLocation] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [pitch, setPitch] = useState("");
   const [description, setDescription] = useState("");
-  const [fundingGoal, setFundingGoal] = useState("");
-  const [published, setPublished] = useState(false);
+  const [capitalSought, setCapitalSought] = useState("");
+  const [useOfFunds, setUseOfFunds] = useState("");
+  const [revenueRange, setRevenueRange] = useState("");
+  const [status, setStatus] = useState<ListingStatus>("open");
+  const [published, setPublished] = useState(true);
 
-  if (!loading && user && user.role !== "business") {
-    router.replace("/dashboard");
-  }
+  // Private fields
+  const [privateDescription, setPrivateDescription] = useState("");
+  const [privateFinancials, setPrivateFinancials] = useState("");
+  const [privateDeckUrl, setPrivateDeckUrl] = useState("");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user) return;
     setError(null);
-    const goal = Number(fundingGoal);
-    if (!name.trim() || !pitch.trim() || !goal || goal < 1) {
+    if (!user || !name.trim() || !pitch.trim()) {
       setError(t.listing.validation);
       return;
     }
     setBusy(true);
     try {
-      const location = [city.trim(), country.trim()].filter(Boolean).join(", ") || city.trim() || country.trim() || "—";
-      const record = await getPb().collection("businesses").create({
+      const pb = getPb();
+      const fullLocation = city && country ? `${city}, ${country}` : location;
+      await pb.collection("businesses").create<Business>({
         owner: user.id,
         name: name.trim(),
         category,
         investmentType,
-        location,
+        location: fullLocation.trim(),
         city: city.trim(),
         country: country.trim(),
-        pitch: pitch.trim().slice(0, 160),
+        pitch: pitch.trim(),
         description: description.trim(),
-        fundingGoal: goal,
-        fundingRaised: 0,
+        status,
+        capitalSought: capitalSought.trim(),
+        useOfFunds: useOfFunds.trim(),
+        revenueRange: revenueRange.trim(),
+        privateDescription: privateDescription.trim(),
+        privateFinancials: privateFinancials.trim(),
+        privateDeckUrl: privateDeckUrl.trim(),
         published,
+        vetted: false,
+        featured: false,
       });
-      router.push(`/businesses/${record.id}`);
+      router.push("/dashboard");
     } catch (err) {
-      const e = err as { message?: string; response?: { message?: string } };
-      setError(e?.response?.message || e?.message || t.listing.createError);
+      setError(err instanceof Error ? err.message : t.listing.createError);
     } finally {
       setBusy(false);
     }
   }
 
-  if (loading || !user) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <Loader2 className="h-7 w-7 animate-spin text-brand-600" />
-      </div>
-    );
+  if (!user || user.role !== "business") {
+    router.replace("/dashboard");
+    return null;
   }
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-      <div className="mb-8">
+      <div className="flex items-center gap-2">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 ring-1 ring-brand-200">
           <Plus className="h-3.5 w-3.5" />
           {t.listing.badge}
         </span>
-        <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-brand-950">
-          {t.listing.title}
-        </h1>
-        <p className="mt-1 text-ink/60">{t.listing.subtitle}</p>
       </div>
+      <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-brand-950">{t.listing.title}</h1>
+      <p className="mt-1 text-ink/60">{t.listing.subtitle}</p>
 
-      <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-cream-200 bg-white p-6 shadow-soft">
-        <div>
-          <Label htmlFor="name">{t.listing.name}</Label>
-          <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} maxLength={120} />
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
+      <form onSubmit={onSubmit} className="mt-8 space-y-6">
+        {/* Public section */}
+        <div className="rounded-2xl border border-cream-200 bg-white p-5 space-y-4">
           <div>
-            <Label htmlFor="category">{t.listing.category}</Label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value as Category)}
-              className="mt-0 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20"
-            >
-              {CATEGORY_KEYS.map((k) => (
-                <option key={k} value={k}>
-                  {t.categories[k]}
-                </option>
-              ))}
-            </select>
+            <Label htmlFor="name">{t.listing.name}</Label>
+            <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Bella Vista Trattoria" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="category">{t.listing.category}</Label>
+              <select id="category" value={category} onChange={(e) => setCategory(e.target.value as Category)}
+                className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400">
+                {CATS.map((c) => <option key={c} value={c}>{t.categories[c]}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label htmlFor="type">{t.listing.investmentType}</Label>
+              <select id="type" value={investmentType} onChange={(e) => setInvestmentType(e.target.value as InvestmentType)}
+                className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400">
+                {TYPES.map((tp) => <option key={tp} value={tp}>{t.investmentTypes[tp]}</option>)}
+              </select>
+            </div>
+          </div>
+          <LocationSelect country={country} city={city} onCountryChange={setCountry} onCityChange={setCity} required />
+          <div>
+            <Label htmlFor="pitch">{t.listing.pitch}</Label>
+            <Input id="pitch" required value={pitch} onChange={(e) => setPitch(e.target.value)} placeholder={t.listing.pitchPlaceholder} />
           </div>
           <div>
-            <Label htmlFor="type">{t.listing.investmentType}</Label>
-            <select
-              id="type"
-              value={investmentType}
-              onChange={(e) => setInvestmentType(e.target.value as InvestmentType)}
-              className="mt-0 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20"
-            >
-              {TYPE_KEYS.map((k) => (
-                <option key={k} value={k}>
-                  {t.investmentTypes[k]}
-                </option>
-              ))}
-            </select>
+            <Label htmlFor="desc">{t.listing.description}</Label>
+            <textarea id="desc" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.listing.descriptionPlaceholder}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400" />
           </div>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div>
+              <Label htmlFor="capital" hint={t.listing.capitalSoughtHint}>{t.listing.capitalSought}</Label>
+              <Input id="capital" value={capitalSought} onChange={(e) => setCapitalSought(e.target.value)} placeholder="€50,000 - €100,000" />
+            </div>
+            <div>
+              <Label htmlFor="revenue" hint={t.listing.revenueRangeHint}>{t.listing.revenueRange}</Label>
+              <Input id="revenue" value={revenueRange} onChange={(e) => setRevenueRange(e.target.value)} placeholder="€200k - €500k/yr" />
+            </div>
+            <div>
+              <Label htmlFor="status">{t.listing.statusLabel}</Label>
+              <select id="status" value={status} onChange={(e) => setStatus(e.target.value as ListingStatus)}
+                className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400">
+                <option value="open">{t.listing.statusOpen}</option>
+                <option value="paused">{t.listing.statusPaused}</option>
+                <option value="closed">{t.listing.statusClosed}</option>
+              </select>
+            </div>
+          </div>
           <div>
-            <Label htmlFor="city">{t.auth.city}</Label>
-            <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Lisbon" />
+            <Label htmlFor="useOfFunds" hint={t.listing.useOfFundsHint}>{t.listing.useOfFunds}</Label>
+            <textarea id="useOfFunds" rows={2} value={useOfFunds} onChange={(e) => setUseOfFunds(e.target.value)}
+              placeholder="Equipment purchase, location expansion, working capital..."
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400" />
+          </div>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-3.5">
+            <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-cream-200 accent-brand-600" />
+            <span className="text-sm text-ink/70">{t.listing.publishNow}</span>
+          </label>
+        </div>
+
+        {/* Private section */}
+        <div className="rounded-2xl border border-brand-200 bg-brand-50 p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <Lock className="h-4 w-4 text-brand-600" />
+            <h3 className="text-sm font-semibold text-brand-900">{t.listing.privateSection}</h3>
+          </div>
+          <p className="text-xs text-ink/55">{t.listing.privateSectionHint}</p>
+          <div>
+            <Label htmlFor="privDesc">{t.listing.privateDescription}</Label>
+            <textarea id="privDesc" rows={3} value={privateDescription} onChange={(e) => setPrivateDescription(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400" />
           </div>
           <div>
-            <Label htmlFor="country">{t.auth.country}</Label>
-            <Input id="country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Portugal" />
+            <Label htmlFor="privFin">{t.listing.privateFinancials}</Label>
+            <textarea id="privFin" rows={3} value={privateFinancials} onChange={(e) => setPrivateFinancials(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-400" />
+          </div>
+          <div>
+            <Label htmlFor="privDeck">{t.listing.privateDeckUrl}</Label>
+            <Input id="privDeck" value={privateDeckUrl} onChange={(e) => setPrivateDeckUrl(e.target.value)} placeholder="https://..." />
           </div>
         </div>
-
-        <div>
-          <Label htmlFor="pitch">{t.listing.pitch}</Label>
-          <Input
-            id="pitch"
-            required
-            maxLength={160}
-            value={pitch}
-            onChange={(e) => setPitch(e.target.value)}
-            placeholder={t.listing.pitchPlaceholder}
-          />
-          <p className="mt-1 text-xs text-ink/45">{pitch.length}/160</p>
-        </div>
-
-        <div>
-          <Label htmlFor="description">{t.listing.description}</Label>
-          <textarea
-            id="description"
-            rows={4}
-            maxLength={2000}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm shadow-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20"
-            placeholder={t.listing.descriptionPlaceholder}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="goal">{t.listing.fundingGoal}</Label>
-          <Input
-            id="goal"
-            type="number"
-            min={1}
-            required
-            value={fundingGoal}
-            onChange={(e) => setFundingGoal(e.target.value)}
-            placeholder="50000"
-          />
-          <p className="mt-1 text-xs text-ink/45">{t.listing.fundingGoalHint}</p>
-        </div>
-
-        <label className="flex items-center gap-3 rounded-xl border border-cream-200 bg-cream-50 px-4 py-3 text-sm">
-          <input
-            type="checkbox"
-            checked={published}
-            onChange={(e) => setPublished(e.target.checked)}
-            className="h-4 w-4 rounded border-cream-300 text-brand-700 focus:ring-brand-500"
-          />
-          <span>
-            <span className="font-medium text-brand-900">{t.listing.publishNow}</span>
-            <span className="block text-xs text-ink/55">{t.listing.publishHint}</span>
-          </span>
-        </label>
 
         <ErrorNote>{error}</ErrorNote>
-
-        <div className="flex gap-3">
-          <Button type="button" variant="outline" onClick={() => router.push("/dashboard")} disabled={busy}>
-            {t.dashboard.cancel}
-          </Button>
-          <Button type="submit" disabled={busy} className="flex-1">
-            {busy ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> {t.listing.creating}
-              </>
-            ) : (
-              t.listing.create
-            )}
-          </Button>
-        </div>
+        <Button type="submit" disabled={busy}>
+          {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+          {busy ? t.listing.creating : t.listing.create}
+        </Button>
       </form>
     </div>
   );

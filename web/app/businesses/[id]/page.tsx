@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, ArrowLeft, Target, TrendingUp, CheckCircle2, ShieldCheck } from "lucide-react";
-import { getBusiness } from "@/lib/api";
-import { CATEGORIES, formatCurrency, pct } from "@/lib/constants";
+import { MapPin, ArrowLeft, Target, TrendingUp, ShieldCheck, Lock, CheckCircle2, BadgeCheck, MessageSquare } from "lucide-react";
+import { getBusiness, checkInterest } from "@/lib/api";
+import { CATEGORIES } from "@/lib/constants";
 import InvestmentPill from "@/components/InvestmentPill";
+import { InterestButton } from "@/components/InterestButton";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
-import { StartDealButton } from "@/components/deals/StartDealButton";
-import type { Business, User } from "@/lib/types";
+import type { Business, User, Interest } from "@/lib/types";
 import { PB_URL } from "@/lib/types";
 
 const BANNERS: Record<string, string> = {
@@ -43,15 +43,20 @@ export default function BusinessDetailPage() {
   const { t } = useI18n();
   const { user } = useAuth();
   const [business, setBusiness] = useState<Business | null>(null);
+  const [interest, setInterest] = useState<Interest | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!params.id) return;
-    getBusiness(params.id).then((b) => {
+    Promise.all([
+      getBusiness(params.id),
+      user?.role === "investor" ? checkInterest(params.id) : Promise.resolve(null),
+    ]).then(([b, i]) => {
       setBusiness(b);
+      setInterest(i);
       setLoading(false);
     });
-  }, [params.id]);
+  }, [params.id, user]);
 
   if (loading) {
     return (
@@ -74,13 +79,13 @@ export default function BusinessDetailPage() {
 
   const cat = CATEGORIES[business.category] ?? CATEGORIES.other;
   const catLabel = t.categories[business.category];
-  const percent = pct(business.fundingRaised, business.fundingGoal);
-  const remaining = Math.max(0, business.fundingGoal - business.fundingRaised);
   const owner = business.expand?.owner as User | undefined;
   const hasImage = business.image && business.image.length > 0;
   const imageUrl = hasImage
     ? `${PB_URL}/api/files/businesses/${business.id}/${business.image}`
     : UNSPLASH_IMAGES[business.category] ?? UNSPLASH_IMAGES.other;
+  const hasExpressedInterest = !!interest;
+  const isOwner = user?.id === business.owner;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -99,10 +104,15 @@ export default function BusinessDetailPage() {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/50" />
-        <div className="bg-grid absolute inset-0 opacity-20" aria-hidden="true" />
         <span className="text-6xl drop-shadow sm:text-7xl" aria-hidden="true">{cat.emoji}</span>
-        <div className="absolute left-5 top-5 z-10">
+        <div className="absolute left-5 top-5 z-10 flex gap-2">
           <InvestmentPill type={business.investmentType} />
+          {business.vetted && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-brand-700">
+              <BadgeCheck className="h-3.5 w-3.5" />
+              {t.businessDetail.vetted}
+            </span>
+          )}
         </div>
       </div>
 
@@ -127,59 +137,106 @@ export default function BusinessDetailPage() {
             </div>
           )}
 
-          <div className="mt-8 rounded-2xl border border-cream-200 bg-cream-50 p-5">
-            <h3 className="flex items-center gap-2 text-sm font-semibold text-brand-900">
-              <ShieldCheck className="h-4 w-4 text-brand-600" />
-              {t.businessDetail.whatInvestorsGet}
-            </h3>
-            <ul className="mt-3 space-y-2 text-sm text-ink/65">
-              <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-brand-600" />{t.businessDetail.whatInvestorsgetBody1}</li>
-              <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-brand-600" />{t.businessDetail.whatInvestorsgetBody2}</li>
-              <li className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-brand-600" />{t.businessDetail.whatInvestorsgetBody3}</li>
-            </ul>
+          {business.useOfFunds && (
+            <div className="mt-6">
+              <h2 className="font-display text-lg font-semibold text-brand-900">{t.businessDetail.useOfFunds}</h2>
+              <p className="mt-2 leading-relaxed text-ink/70">{business.useOfFunds}</p>
+            </div>
+          )}
+
+          {business.revenueRange && (
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold text-brand-900">{t.businessDetail.revenueRange}</h3>
+              <p className="mt-1 text-sm text-ink/65">{business.revenueRange}</p>
+            </div>
+          )}
+
+          {/* Private info section */}
+          <div className="mt-8">
+            {hasExpressedInterest ? (
+              <div className="rounded-2xl border border-brand-200 bg-brand-50 p-5">
+                <h3 className="flex items-center gap-2 text-sm font-semibold text-brand-900">
+                  <CheckCircle2 className="h-4 w-4 text-brand-600" />
+                  {t.businessDetail.privateInfoUnlocked}
+                </h3>
+                {business.privateDescription && (
+                  <div className="mt-4">
+                    <p className="text-xs font-medium uppercase tracking-wider text-ink/45">{t.businessDetail.privateDescription}</p>
+                    <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ink/70">{business.privateDescription}</p>
+                  </div>
+                )}
+                {business.privateFinancials && (
+                  <div className="mt-4">
+                    <p className="text-xs font-medium uppercase tracking-wider text-ink/45">{t.businessDetail.privateFinancials}</p>
+                    <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ink/70">{business.privateFinancials}</p>
+                  </div>
+                )}
+                {business.privateDeckUrl && (
+                  <div className="mt-4">
+                    <a
+                      href={business.privateDeckUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-brand-700 shadow-soft"
+                    >
+                      <Target className="h-4 w-4" />
+                      {t.businessDetail.viewDeck}
+                    </a>
+                  </div>
+                )}
+                {interest && (
+                  <Link
+                    href={`/dashboard/messages/${interest.id}`}
+                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    {t.businessDetail.openConversation}
+                  </Link>
+                )}
+              </div>
+            ) : !isOwner ? (
+              <div className="rounded-2xl border border-dashed border-cream-300 bg-cream-50 p-5">
+                <h3 className="flex items-center gap-2 text-sm font-semibold text-ink/65">
+                  <Lock className="h-4 w-4" />
+                  {t.businessDetail.privateInfoLocked}
+                </h3>
+                <p className="mt-2 text-sm text-ink/55">{t.businessDetail.privateInfoLockedBody}</p>
+              </div>
+            ) : null}
           </div>
         </div>
 
         <aside className="lg:sticky lg:top-20 lg:self-start">
           <div className="rounded-2xl border border-cream-200 bg-white p-6 shadow-soft">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-ink/55">{t.businessDetail.raised}</span>
-              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700">{percent}{t.businessDetail.funded}</span>
-            </div>
-            <p className="mt-1 font-display text-3xl font-semibold text-brand-900">{formatCurrency(business.fundingRaised)}</p>
-            <p className="text-sm text-ink/50">{t.businessDetail.goalOf} {formatCurrency(business.fundingGoal)}</p>
-
-            <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-cream-200">
-              <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700" style={{ width: `${percent}%` }} />
-            </div>
-
-            <dl className="mt-5 space-y-3 border-t border-cream-200 pt-5 text-sm">
-              <div className="flex items-center justify-between">
-                <dt className="flex items-center gap-1.5 text-ink/55"><Target className="h-4 w-4" /> {t.businessDetail.remaining}</dt>
-                <dd className="font-semibold text-brand-900">{formatCurrency(remaining)}</dd>
+            {business.capitalSought && (
+              <div className="mb-4">
+                <p className="text-sm text-ink/55">{t.businessDetail.capitalSought}</p>
+                <p className="font-display text-2xl font-semibold text-brand-900">{business.capitalSought}</p>
               </div>
+            )}
+
+            <dl className="space-y-3 border-t border-cream-200 pt-4 text-sm">
               <div className="flex items-center justify-between">
                 <dt className="flex items-center gap-1.5 text-ink/55"><TrendingUp className="h-4 w-4" /> {t.businessDetail.dealType}</dt>
                 <dd><InvestmentPill type={business.investmentType} size="sm" /></dd>
               </div>
             </dl>
 
-            {user?.role === "investor" ? (
-              <StartDealButton
-                businessId={business.id}
-                businessName={business.name}
-                suggestedAmount={Math.max(1000, business.fundingGoal - business.fundingRaised)}
-              />
-            ) : (
+            {user?.role === "investor" && !isOwner ? (
+              <InterestButton businessId={business.id} />
+            ) : !user ? (
               <Link href="/register" className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-brand-700 px-4 py-3 text-sm font-semibold text-white shadow-soft transition-all hover:bg-brand-800">
                 {t.businessDetail.expressInterest}
               </Link>
+            ) : isOwner ? (
+              <Link href="/dashboard" className="mt-6 inline-flex w-full items-center justify-center rounded-xl border border-cream-200 bg-white px-4 py-3 text-sm font-semibold text-brand-800 hover:bg-cream-100">
+                {t.businessDetail.editListing}
+              </Link>
+            ) : null}
+
+            {!hasExpressedInterest && !isOwner && (
+              <p className="mt-2 text-center text-xs text-ink/40">{t.businessDetail.expressInterestHint}</p>
             )}
-            <p className="mt-2 text-center text-xs text-ink/40">
-              {user?.role === "investor"
-                ? "Escrow-protected. Funds released only after both parties confirm handover."
-                : t.businessDetail.expressInterestHint}
-            </p>
           </div>
 
           {owner && (
@@ -196,6 +253,14 @@ export default function BusinessDetailPage() {
               </div>
             </div>
           )}
+
+          <div className="mt-4 rounded-2xl border border-cream-200 bg-cream-50 p-5">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-brand-900">
+              <ShieldCheck className="h-4 w-4 text-brand-600" />
+              {t.businessDetail.disclaimerTitle}
+            </h3>
+            <p className="mt-2 text-xs leading-relaxed text-ink/55">{t.businessDetail.disclaimerBody}</p>
+          </div>
         </aside>
       </div>
     </div>

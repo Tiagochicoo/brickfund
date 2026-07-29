@@ -1,4 +1,4 @@
-import type { Category, InvestmentType } from "./types";
+import type { Category, InvestmentType, ListingStatus } from "./types";
 import type { TranslationDict } from "./i18n/en";
 
 export const INVESTMENT_TYPE_STYLES: Record<
@@ -43,6 +43,21 @@ export const CATEGORIES: Record<Category, { emoji: string }> = {
   other: { emoji: "🏢" },
 };
 
+export const STATUS_STYLES: Record<ListingStatus, { pill: string; dot: string }> = {
+  open: {
+    pill: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+    dot: "bg-emerald-500",
+  },
+  paused: {
+    pill: "bg-amber-50 text-amber-700 ring-amber-200",
+    dot: "bg-amber-500",
+  },
+  closed: {
+    pill: "bg-zinc-50 text-zinc-700 ring-zinc-200",
+    dot: "bg-zinc-500",
+  },
+};
+
 export function getInvestmentTypeMeta(type: InvestmentType, t: TranslationDict) {
   const style = INVESTMENT_TYPE_STYLES[type];
   const label = t.investmentTypes[type];
@@ -60,9 +75,4 @@ export function formatCurrency(n: number): string {
     currency: "EUR",
     maximumFractionDigits: 0,
   }).format(n);
-}
-
-export function pct(raised: number, goal: number): number {
-  if (goal <= 0) return 0;
-  return Math.min(100, Math.round((raised / goal) * 100));
 }

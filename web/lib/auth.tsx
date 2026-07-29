@@ -10,7 +10,6 @@ import {
   type ReactNode,
 } from "react";
 import { getPb } from "./pb";
-import { clearAuthCookie, syncAuthCookie } from "./auth-cookie";
 import type { Role, User } from "./types";
 
 type RegisterInput = {
@@ -22,13 +21,33 @@ type RegisterInput = {
   company?: string;
   location?: string;
   investorType?: "individual" | "firm" | "fund";
-  accredited?: boolean;
-  budgetMin?: number;
-  budgetMax?: number;
+  ticketMin?: string;
+  ticketMax?: string;
+  bio?: string;
+  experience?: string;
   phone?: string;
   city?: string;
   country?: string;
+  termsAccepted?: boolean;
 };
+
+/** Sync the PocketBase auth token to a cookie so server-side code can read it. */
+function syncAuthCookie(pb: ReturnType<typeof getPb>) {
+  if (typeof document === "undefined") return;
+  const token = pb.authStore.token;
+  if (token) {
+    const model = pb.authStore.model;
+    const value = encodeURIComponent(JSON.stringify({ token, model }));
+    document.cookie = `pb_auth=${value}; path=/; max-age=604800; SameSite=Lax`;
+  } else {
+    document.cookie = "pb_auth=; path=/; max-age=0";
+  }
+}
+
+function clearAuthCookie() {
+  if (typeof document === "undefined") return;
+  document.cookie = "pb_auth=; path=/; max-age=0";
+}
 
 interface AuthState {
   user: User | null;

@@ -34,6 +34,23 @@ export type TranslationDict = {
     whatInvestorsgetBody1: string; whatInvestorsgetBody2: string; whatInvestorsgetBody3: string;
     raised: string; funded: string; goalOf: string; remaining: string; dealType: string;
     expressInterest: string; expressInterestHint: string; listedBy: string; fundedBadge: string;
+    vetted: string; useOfFunds: string; revenueRange: string; capitalSought: string;
+    privateInfoUnlocked: string; privateInfoLocked: string; privateInfoLockedBody: string;
+    privateDescription: string; privateFinancials: string; viewDeck: string;
+    openConversation: string; editListing: string; disclaimerTitle: string; disclaimerBody: string;
+  };
+  interest: {
+    expressInterest: string; send: string; sending: string; sentTitle: string; sentBody: string;
+    ticketSizeLabel: string; messageLabel: string; messagePlaceholder: string;
+    viewConversation: string; disclaimer: string;
+  };
+  messages: {
+    title: string; subtitle: string; emptyTitle: string; emptyBody: string;
+    placeholder: string; send: string; sending: string; acceptInterest: string;
+    declineInterest: string; accept: string; decline: string; accepted: string;
+    declined: string; pending: string; withdrawn: string; statusLabel: string;
+    privateInfoAvailable: string; attachmentLabel: string; attachmentUrl: string;
+    attachmentOptional: string;
   };
   auth: {
     welcomeBack: string; signInSubtitle: string; email: string; password: string;
@@ -50,7 +67,8 @@ export type TranslationDict = {
     passwordMin: string; passwordConfirm: string; passwordRepeat: string;
     passwordMismatch: string; passwordShort: string; createError: string;
     creatingBusiness: string; creatingInvestor: string; createBusinessBtn: string;
-    createInvestorBtn: string; termsNotice: string; quote: string; quoteAuthor: string;
+    createInvestorBtn: string; termsNotice: string; termsAcceptLabel: string; termsAcceptRequired: string;
+    quote: string; quoteAuthor: string;
     quoteRole: string; resetTitle: string; resetSubtitle: string; sendResetLink: string;
     sending: string; resetSent: string; resetSentBody: string; remembered: string;
     backToSignIn: string; signingOut: string;
@@ -66,6 +84,13 @@ export type TranslationDict = {
     visibleToInvestors: string; hiddenFromMarketplace: string; saving: string;
     delete: string; deleteTitle: string; deleteWarning: string; deleteConfirmBtn: string;
     deleting: string; cancel: string;
+    interestsReceived: string; savedBusinesses: string; conversations: string;
+    recentInterests: string; yourInterests: string; messages: string;
+    noInterests: string; noSaved: string; noMessages: string; noListings: string;
+    openListing: string; pausedListing: string; closedListing: string;
+    acceptInterest: string; declineInterest: string; viewMessages: string;
+    statusOpen: string; statusPaused: string; statusClosed: string;
+    vetted: string; notVetted: string;
   };
   listing: {
     badge: string; title: string; subtitle: string; name: string; category: string;
@@ -73,6 +98,11 @@ export type TranslationDict = {
     descriptionPlaceholder: string; fundingGoal: string; fundingGoalHint: string;
     publishNow: string; publishHint: string; create: string; creating: string;
     validation: string; createError: string;
+    capitalSought: string; capitalSoughtHint: string; useOfFunds: string; useOfFundsHint: string;
+    revenueRange: string; revenueRangeHint: string; statusLabel: string; statusOpen: string;
+    statusPaused: string; statusClosed: string;
+    privateSection: string; privateSectionHint: string;
+    privateDescription: string; privateFinancials: string; privateDeckUrl: string;
   };
   legal: {
     termsTitle: string; privacyTitle: string; riskTitle: string; lastUpdated: string; counselNote: string;
@@ -88,15 +118,6 @@ export type TranslationDict = {
     salon: string; bakery: string; bar: string; other: string;
   };
   misc: { of: string; raised: string; all: string };
-  deals: {
-    startInvestmentDeal: string; startDeal: string;
-    processDescription: string; investmentAmountLabel: string;
-    noteToBusinessLabel: string; noteToBusinessPlaceholder: string;
-    cancel: string; creating: string; createDeal: string;
-    pageBadge: string; pageTitle: string; pageSubtitle: string; findOpportunity: string;
-    dealCreated: string; emptyTitle: string; emptyBody: string; browseBusinesses: string;
-    youAreThe: string; with: string; loadError: string;
-  };
 };
 
 export const en: TranslationDict = {
@@ -166,7 +187,7 @@ export const en: TranslationDict = {
       "Browse vetted opportunities by category, location, and investment type — then reach out.",
     step3Title: "Capital deployed",
     step3Body:
-      "Agree terms and fund the growth. Track milestones and updates from your dashboard.",
+      "Express interest, unlock private information, and connect directly. No middleman.",
     investorBadge: "For investors",
     investorTitle: "Build a portfolio of real, local businesses",
     investorBody:
@@ -222,6 +243,54 @@ export const en: TranslationDict = {
     expressInterestHint: "Create a free investor account to connect.",
     listedBy: "Listed by",
     fundedBadge: "Funded",
+    vetted: "Vetted",
+    capitalSought: "Capital sought",
+    useOfFunds: "Use of funds",
+    revenueRange: "Revenue range",
+    privateInfoLocked: "Private information",
+    privateInfoLockedBody: "Express interest to unlock financial details, pitch decks, and other private information.",
+    privateInfoUnlocked: "Private information unlocked",
+    privateDescription: "Private description",
+    privateFinancials: "Financial details",
+    viewDeck: "View pitch deck",
+    openConversation: "Open conversation",
+    editListing: "Edit listing",
+    disclaimerTitle: "Important notice",
+    disclaimerBody: "Brickfund is a discovery platform only. We do not process payments, hold funds, or facilitate deals. All investment decisions and transactions happen directly between you and the business. Brickfund is not responsible for any outcome.", 
+  },
+  interest: {
+    expressInterest: "I'm interested",
+    send: "Send interest",
+    sending: "Sending...",
+    sentTitle: "Interest sent",
+    sentBody: "The business has been notified. You will be contacted when they respond.",
+    ticketSizeLabel: "Your ticket size (optional)",
+    messageLabel: "Message to the business (optional)",
+    messagePlaceholder: "I'm interested in learning more about this opportunity...",
+    viewConversation: "View conversation",
+    disclaimer: "Brickfund is a discovery platform. All deals happen directly between parties.",
+  },
+  messages: {
+    title: "Messages",
+    subtitle: "Your conversations with businesses and investors",
+    emptyTitle: "No conversations yet",
+    emptyBody: "When you express interest in a business or an investor contacts you, conversations will appear here.",
+    placeholder: "Type your message...",
+    send: "Send",
+    sending: "Sending...",
+    acceptInterest: "Accept interest",
+    declineInterest: "Decline",
+    accept: "Accept",
+    decline: "Decline",
+    accepted: "Accepted",
+    declined: "Declined",
+    pending: "Pending",
+    withdrawn: "Withdrawn",
+    statusLabel: "Status",
+    privateInfoAvailable: "Private information is now available. Check the business profile for financial details and documents.",
+    attachmentLabel: "Attachment label",
+    attachmentUrl: "Attachment URL",
+    attachmentOptional: "Optional",
   },
   auth: {
     welcomeBack: "Welcome back",
@@ -279,6 +348,8 @@ export const en: TranslationDict = {
     createInvestorBtn: "Create investor account",
     termsNotice:
       "By continuing you agree to Brickfund's terms and privacy policy.",
+    termsAcceptLabel: "I have read and accept the Terms and Conditions and Privacy Policy",
+    termsAcceptRequired: "You must accept the Terms and Privacy Policy to create an account",
     quote:
       "We funded our terrace expansion in three weeks. Brickfund connected us with investors who actually understand hospitality.",
     quoteAuthor: "Maria Silva",
@@ -330,6 +401,27 @@ export const en: TranslationDict = {
     deleteConfirmBtn: "Delete",
     deleting: "Deleting…",
     cancel: "Cancel",
+    interestsReceived: "Interests received",
+    savedBusinesses: "Saved businesses",
+    conversations: "Conversations",
+    recentInterests: "Recent interests",
+    yourInterests: "Your interests",
+    messages: "Messages",
+    noInterests: "No interests yet",
+    noSaved: "No saved businesses yet",
+    noMessages: "No conversations yet",
+    noListings: "No listings yet",
+    openListing: "Open",
+    pausedListing: "Paused",
+    closedListing: "Closed",
+    acceptInterest: "Accept",
+    declineInterest: "Decline",
+    viewMessages: "View messages",
+    statusOpen: "Open",
+    statusPaused: "Paused",
+    statusClosed: "Closed",
+    vetted: "Vetted",
+    notVetted: "Not vetted",
   },
   listing: {
     badge: "New listing",
@@ -350,6 +442,21 @@ export const en: TranslationDict = {
     creating: "Creating…",
     validation: "Name, pitch, and a positive funding goal are required.",
     createError: "Could not create listing. Check your connection and try again.",
+    capitalSought: "Capital sought",
+    capitalSoughtHint: "e.g. €50,000 for 20% equity",
+    useOfFunds: "Use of funds",
+    useOfFundsHint: "What will the capital be used for?",
+    revenueRange: "Revenue range",
+    revenueRangeHint: "e.g. €100k–€200k annual revenue",
+    statusLabel: "Listing status",
+    statusOpen: "Open",
+    statusPaused: "Paused",
+    statusClosed: "Closed",
+    privateSection: "Private information",
+    privateSectionHint: "Only visible to investors who expressed interest",
+    privateDescription: "Private description",
+    privateFinancials: "Financial details",
+    privateDeckUrl: "Pitch deck URL",
   },
   legal: {
     termsTitle: "Terms of use",
@@ -392,27 +499,5 @@ export const en: TranslationDict = {
     of: "of",
     raised: "raised",
     all: "All",
-  },
-  deals: {
-    startInvestmentDeal: "Start an investment deal",
-    startDeal: "Start a deal",
-    processDescription: "You'll move through LOI → APA → escrow → handover. We'll suggest {amount}.",
-    investmentAmountLabel: "Investment amount (EUR)",
-    noteToBusinessLabel: "Note to business (optional)",
-    noteToBusinessPlaceholder: "A short intro, your investment thesis, conditions…",
-    cancel: "Cancel",
-    creating: "Creating…",
-    createDeal: "Create deal",
-    pageBadge: "Escrow-protected deals",
-    pageTitle: "Your deals",
-    pageSubtitle: "LOI → APA → escrow → handover. Funds held by Stripe until both parties confirm.",
-    findOpportunity: "Find an opportunity",
-    dealCreated: "Deal created. Send the Letter of Intent to get started.",
-    emptyTitle: "No active deals",
-    emptyBody: "Browse businesses and start a deal to begin the escrow flow.",
-    browseBusinesses: "Browse businesses",
-    youAreThe: "You are the",
-    with: "with",
-    loadError: "Failed to load deals",
   },
 };
