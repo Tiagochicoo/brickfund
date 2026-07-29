@@ -106,6 +106,12 @@ export type TranslationDict = {
   };
   legal: {
     termsTitle: string; privacyTitle: string; riskTitle: string; lastUpdated: string; counselNote: string;
+    termsS1: string; termsS2: string; termsS2Bullet1: string; termsS2Bullet2: string; termsS2Bullet3: string;
+    termsS2Bullet4: string; termsS2Bullet5: string; termsS3: string; termsS4: string; termsS5: string; termsS6: string; termsS7: string;
+    privacyS1Heading: string; privacyS1: string; privacyS2Heading: string; privacyS2: string;
+    privacyS3Heading: string; privacyS3: string; privacyS4Heading: string; privacyS4: string;
+    privacyS5Heading: string; privacyS5: string; privacyS6Heading: string; privacyS6: string;
+    riskP1Bold: string; riskP1: string; riskP2: string; riskP3Bold: string; riskP3: string; riskP4: string;
   };
   notFound: { title: string; body: string; backHome: string };
   investmentTypes: {
@@ -464,6 +470,36 @@ export const en: TranslationDict = {
     riskTitle: "Risk disclosure",
     lastUpdated: "Last updated: July 2026",
     counselNote: "This summary is not legal advice. Counsel review required before taking live capital.",
+    termsS1: "Brickfund is a discovery platform. We help local businesses present funding opportunities and help investors find them. That is all we do.",
+    termsS2: "Brickfund is not a middleman, escrow agent, payment processor, or deal facilitator. We do not:",
+    termsS2Bullet1: "Process payments or hold funds.",
+    termsS2Bullet2: "Verify or guarantee the accuracy of any listing.",
+    termsS2Bullet3: "Facilitate, negotiate, or structure any deal.",
+    termsS2Bullet4: "Provide legal, financial, or investment advice.",
+    termsS2Bullet5: "Take responsibility for any outcome of any interaction between users.",
+    termsS3: "Any investment, loan, or agreement you make is entirely between you and the other party. Brickfund has zero responsibility for any deal, terms, money transfer, or outcome. You deal directly with each other at your own risk.",
+    termsS4: "You are responsible for your own decisions. Do your own due diligence. Verify information independently. Do not invest more than you can afford to lose.",
+    termsS5: "All information shared on Brickfund is the sole responsibility of the users who share it. Businesses control what they publish. Investors control what they share about themselves. Brickfund does not verify or endorse any information.",
+    termsS6: "We may suspend accounts that abuse the platform, attempt fraud, or violate applicable law.",
+    termsS7: "Contact the site operator via the channels published on brick-fund.com.",
+    privacyS1Heading: "1. What we collect",
+    privacyS1: "We collect your name, email address, role (business or investor), location, and any content you submit to your profile or listings.",
+    privacyS2Heading: "2. How we use your data",
+    privacyS2: "We use your data to provide the discovery platform. This includes showing your listing to investors, enabling interest notifications, and allowing private messaging between users who have connected.",
+    privacyS3Heading: "3. What we do not do",
+    privacyS3: "We do not process payments. We do not store payment card numbers. We do not share your data with third parties for marketing purposes.",
+    privacyS4Heading: "4. Legal basis",
+    privacyS4: "We process data based on contract performance (providing the platform), legitimate interests (security and improvements), and consent where required.",
+    privacyS5Heading: "5. Your rights",
+    privacyS5: "You may request access, correction, or deletion of your personal data. Contact the operator to exercise your rights under GDPR or applicable law.",
+    privacyS6Heading: "6. Cookies",
+    privacyS6: "We use cookies and local storage for authentication and language preference only. We do not use tracking cookies.",
+    riskP1Bold: "Capital at risk.",
+    riskP1: "Investing in private businesses can result in partial or total loss of capital. Returns are not guaranteed. Past performance is not indicative of future results.",
+    riskP2: "Investment types may include loans, equity, revenue share, or convertible notes. Each carries different legal, tax, and liquidity characteristics. Some offerings may only be available to professional or sophisticated investors under local securities law.",
+    riskP3Bold: "Brickfund is a discovery platform only.",
+    riskP3: "We are not a bank, broker-dealer, or collective investment scheme. We do not verify the financial claims made by businesses on this platform. All information shared by businesses is their sole responsibility.",
+    riskP4: "Independent legal, tax, and financial advice is strongly recommended before making any investment. You deal directly with the other party at your own risk. Brickfund accepts no responsibility for any outcome.",
   },
   notFound: {
     title: "Page not found",
