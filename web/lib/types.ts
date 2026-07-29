@@ -9,7 +9,8 @@ export type InvestmentType =
   | "loan"
   | "equity"
   | "revenue_share"
-  | "convertible_note";
+  | "convertible_note"
+  | "trespasse";
 
 export type Category =
   | "restaurant"

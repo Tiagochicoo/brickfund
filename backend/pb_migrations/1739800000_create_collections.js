@@ -38,7 +38,7 @@ migrate((app) => {
         new RelationField({ name: "owner", required: true, maxSelect: 1, collectionId: users.id, cascadeDelete: true }),
         new TextField({ name: "name", required: true, min: 2, max: 120 }),
         new SelectField({ name: "category", required: true, presentable: true, maxSelect: 1, values: ["restaurant", "barber", "gym", "cafe", "retail", "salon", "bakery", "bar", "other"] }),
-        new SelectField({ name: "investmentType", required: true, presentable: true, maxSelect: 1, values: ["seed", "growth", "loan", "equity", "revenue_share", "convertible_note"] }),
+        new SelectField({ name: "investmentType", required: true, presentable: true, maxSelect: 1, values: ["seed", "growth", "loan", "equity", "revenue_share", "convertible_note", "trespasse"] }),
         new TextField({ name: "location", required: true, max: 120 }),
         new TextField({ name: "pitch", required: true, max: 160 }),
         new TextField({ name: "description", max: 2000 }),

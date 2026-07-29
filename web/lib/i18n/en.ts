@@ -118,8 +118,10 @@ export type TranslationDict = {
   notFound: { title: string; body: string; backHome: string };
   investmentTypes: {
     seed: string; growth: string; loan: string; equity: string; revenue_share: string;
-    convertible_note: string; seedBlurb: string; growthBlurb: string; loanBlurb: string;
+    convertible_note: string; trespasse: string;
+    seedBlurb: string; growthBlurb: string; loanBlurb: string;
     equityBlurb: string; revenue_shareBlurb: string; convertible_noteBlurb: string;
+    trespasseBlurb: string;
   };
   categories: {
     restaurant: string; barber: string; gym: string; cafe: string; retail: string;
@@ -518,12 +520,14 @@ export const en: TranslationDict = {
     equity: "Equity",
     revenue_share: "Revenue Share",
     convertible_note: "Convertible Note",
+    trespasse: "Total buyout",
     seedBlurb: "Early-stage capital to launch.",
     growthBlurb: "Funds to expand an existing business.",
     loanBlurb: "Debt financing repaid over time.",
     equityBlurb: "Ownership stake in exchange for capital.",
     revenue_shareBlurb: "Investors earn a % of monthly revenue.",
     convertible_noteBlurb: "Debt that converts to equity later.",
+    trespasseBlurb: "Full purchase of the business as a going concern (trespasse).",
   },
   categories: {
     restaurant: "Restaurant",
